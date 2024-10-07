@@ -20,26 +20,25 @@ public class KHACH_HANG {
     public KHACH_HANG(Driver driver) {
         this.driver = driver;
     }
-
+    
     public boolean insert(TTKhachHang khachHang) {
         String query = "CREATE (k:KhachHang {MaKH: $maKH, TenKH: $tenKH, GioiTinh: $gioiTinh, " +
-                "SDT: $sdt, DiaChi: $diaChi, SoThich: $soThich, SoLuongMua: $soLuongMua, " +
-                "VIP_Status: $vipStatus, NgayDangKy: $ngayDangKy})";
+                       "SDT: $sdt, DiaChi: $diaChi, SoThich: $soThich, SoLuongMua: $soLuongMua, " +
+                       "VIP_Status: $vipStatus, NgayDangKy: $ngayDangKy})";
 
         try (Session session = driver.session()) {
             session.writeTransaction(tx -> {
-                tx.run(query, 
-                        org.neo4j.driver.Values.parameters(
-                                "maKH", khachHang.getMaKH(),
-                                "tenKH", khachHang.getTenKH(),
-                                "gioiTinh", khachHang.getGioiTinh(),
-                                "sdt", khachHang.getSDT(),
-                                "diaChi", khachHang.getDiaChi(),
-                                "soThich", khachHang.getSoThich(),
-                                "soLuongMua", khachHang.getSoLuongMua(),
-                                "vipStatus", khachHang.isVIP_Status(),
-                                "ngayDangKy", khachHang.getNgayDangKy()
-                        ));
+                tx.run(query, org.neo4j.driver.Values.parameters(
+                        "maKH", khachHang.getMaKH(),
+                        "tenKH", khachHang.getTenKH(),
+                        "gioiTinh", khachHang.getGioiTinh(),
+                        "sdt", khachHang.getSDT(),
+                        "diaChi", khachHang.getDiaChi(),
+                        "soThich", khachHang.getSoThich(),
+                        "soLuongMua", khachHang.getSoLuongMua(),
+                        "vipStatus", khachHang.isVIP_Status(),
+                        "ngayDangKy", khachHang.getNgayDangKy()
+                ));
                 return null;
             });
             return true;
@@ -90,18 +89,17 @@ public class KHACH_HANG {
 
         try (Session session = driver.session()) {
             session.writeTransaction(tx -> {
-                tx.run(query, 
-                        org.neo4j.driver.Values.parameters(
-                                "maKH", khachHang.getMaKH(),
-                                "tenKH", khachHang.getTenKH(),
-                                "gioiTinh", khachHang.getGioiTinh(),
-                                "sdt", khachHang.getSDT(),
-                                "diaChi", khachHang.getDiaChi(),
-                                "soThich", khachHang.getSoThich(),
-                                "soLuongMua", khachHang.getSoLuongMua(),
-                                "vipStatus", khachHang.isVIP_Status(),
-                                "ngayDangKy", khachHang.getNgayDangKy()
-                        ));
+                tx.run(query, org.neo4j.driver.Values.parameters(
+                        "maKH", khachHang.getMaKH(),
+                        "tenKH", khachHang.getTenKH(),
+                        "gioiTinh", khachHang.getGioiTinh(),
+                        "sdt", khachHang.getSDT(),
+                        "diaChi", khachHang.getDiaChi(),
+                        "soThich", khachHang.getSoThich(),
+                        "soLuongMua", khachHang.getSoLuongMua(),
+                        "vipStatus", khachHang.isVIP_Status(),
+                        "ngayDangKy", khachHang.getNgayDangKy()
+                ));
                 return null;
             });
             return true;

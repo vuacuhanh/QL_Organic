@@ -28,35 +28,46 @@ public class frmKhachHang extends javax.swing.JFrame {
     public frmKhachHang() {
         initComponents();
         connectDB = new ConnectDB();
+        if (connectDB.getDriver() == null) {
+            System.out.println("Không thể kết nối tới cơ sở dữ liệu.");
+        } else {
+            System.out.println("Kết nối tới cơ sở dữ liệu thành công.");
+        }
         KhachHang_Load();
     }
 
     public void KhachHang_Load() {
-        String query = "MATCH (k:KhachHang) RETURN k";
+    String query = "MATCH (c:Customer) RETURN c.MaKH AS MaKH, c.TenKH AS TenKH, c.SDT AS SDT, c.DiaChi AS DiaChi, c.GioiTinh AS GioiTinh, c.SoThich AS SoThich, c.SoLuongMua AS SoLuongMua,c.VIP_Status AS VIP_Status, c.NgayDangKy AS NgayDangKy";//, k.VIP_Status AS VIP_Status, k.NgayDangKy AS NgayDangKy
 
-        try (Session session = connectDB.getDriver().session()) {
-            Result resultSet = session.run(query);
-            
-            // Lấy số lượng cột từ cấu trúc của node KhachHang
-            String[] columns = {"MaKH", "TenKH", "SDT", "DiaChi", "GioiTinh", "SoThich", "SoLuongMua", "VIP_Status", "NgayDangKy"};
-            DefaultTableModel model = (DefaultTableModel) listKH.getModel(); // Cập nhật từ listNV thành listKH
-            model.setRowCount(0);
+    try (Session session = connectDB.getDriver().session()) {
+        Result resultSet = session.run(query);
+        System.out.println("Kết nối thành công, đang lấy dữ liệu...");
 
-            while (resultSet.hasNext()) {
-                Record record = resultSet.next();
-                Map<String, Object> properties = record.get("k").asNode().asMap();
+        String[] columns = {"MaKH", "TenKH", "SDT", "DiaChi", "GioiTinh", "SoThich", "SoLuongMua", "VIP_Status", "NgayDangKy"};//, "VIP_Status", "NgayDangKy"
+        DefaultTableModel model = new DefaultTableModel(columns, 0);
+        listKH.setModel(model); 
 
-                Vector<Object> v1 = new Vector<>();
-                for (String column : columns) {
-                    v1.add(properties.getOrDefault(column, null)); // Lấy giá trị từ thuộc tính, nếu không có thì thêm null
+        while (resultSet.hasNext()) {
+            Record record = resultSet.next();
+            Vector<Object> row = new Vector<>();
+
+            for (String column : columns) {
+                Object value = record.get(column).isNull() ? "" : record.get(column).asObject();
+                if (column.equals("VIP_Status") && value instanceof Long) {
+                    value = ((Long) value) != 0;
                 }
-                model.addRow(v1);
+                row.add(value);
             }
-            listKH.setModel(model); // Cập nhật lại model cho JTable
-        } catch (Exception ex) {
-            Logger.getLogger(frmKhachHang.class.getName()).log(Level.SEVERE, null, ex);
+            model.addRow(row);
+            System.out.println("Đã thêm hàng: " + row); // In ra hàng đã thêm
         }
-    } 
+
+        System.out.println("Dữ liệu đã được tải thành công.");
+    } catch (Exception e) {
+        Logger.getLogger(frmKhachHang.class.getName()).log(Level.SEVERE, null, e);
+    }
+}
+
     public void LamMoi(){
         txtMaKH.setText("");
         txtTenKH.setText("");  
@@ -383,22 +394,21 @@ public class frmKhachHang extends javax.swing.JFrame {
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtDChi, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtMaKH, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                                    .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(GioiTinh, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                                            .addComponent(gtNam, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(38, 38, 38)
-                                            .addComponent(gtNu, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(txtTenKH, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(panelBoderFrm1Layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtMaKH, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(panelBoderFrm1Layout.createSequentialGroup()
+                                .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(GioiTinh, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(panelBoderFrm1Layout.createSequentialGroup()
+                                        .addComponent(gtNam, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(38, 38, 38)
+                                        .addComponent(gtNu, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(txtTenKH, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
