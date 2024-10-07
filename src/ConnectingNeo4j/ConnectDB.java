@@ -18,7 +18,10 @@ public class ConnectDB {
     private final Driver driver;
 
     // Khởi tạo kết nối với cơ sở dữ liệu Neo4j
-    public ConnectDB(String uri, String user, String password) {
+    public ConnectDB() {
+        String uri = "bolt://localhost:7687";
+        String user = "neo4j";
+        String password = "123456789"; 
         driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
         if (checkConnection()) {
             System.out.println("Kết nối Neo4j thành công!");
@@ -36,16 +39,12 @@ public class ConnectDB {
             return false;  
         }
     }
-
+    public Driver getDriver() {
+        return driver;
+    }
     // Đóng kết nối
     public void close() {
         driver.close();
     }
 
-    public static void main(String[] args) {
-        // Tạo kết nối
-        ConnectDB connection = new ConnectDB("bolt://localhost:7687", "neo4j", "123456789");
-        // Đóng kết nối sau khi hoàn thành
-        connection.close();
-    }
 }
