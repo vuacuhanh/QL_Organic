@@ -50,8 +50,8 @@ public class QLOganic {
 
     private void displayUsernames() {
         try (Session session = driver.session()) {
-            var result = session.run("MATCH (a:Account) RETURN a.TenDangNhap AS TenDangNhap");
-            System.out.println("Danh sách tên đăng nhập:");
+            var result = session.run("MATCH (c:Customer) RETURN c.MaKH AS MaKH");
+            System.out.println("Danh sách KH:");
             while (result.hasNext()) {
                 var record = result.next();
                 System.out.println(record.get("TenDangNhap").asString());
