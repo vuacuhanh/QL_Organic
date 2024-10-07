@@ -48,17 +48,17 @@ public class QLOganic {
         return driver;
     }
 
-    private void displayUsernames() {
-        try (Session session = driver.session()) {
-            var result = session.run("MATCH (c:Customer) RETURN c.MaKH AS MaKH");
-            System.out.println("Danh sách KH:");
-            while (result.hasNext()) {
-                var record = result.next();
-                System.out.println(record.get("TenDangNhap").asString());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void displayCustomers() {
+    try (Session session = driver.session()) {
+        var result = session.run("MATCH (c:Customer) RETURN c.MaKH AS MaKH, c.TenKH AS TenKH");
+        System.out.println("Danh sách khách hàng:");
+        while (result.hasNext()) {
+            var record = result.next();
+            System.out.println("Mã KH: " + record.get("MaKH").asString() + ", Tên KH: " + record.get("TenKH").asString());
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
     }
 
     // Đóng kết nối
@@ -69,7 +69,8 @@ public class QLOganic {
     public static void main(String[] args) {
         // Khởi tạo đối tượng QLOganic
         QLOganic connection = new QLOganic();
-        connection.displayUsernames();
+        connection.displayCustomers();  // Gọi phương thức hiển thị danh sách khách hàng
+        connection.close();  // Đóng kết nối sau khi xong
         
     }
 }
