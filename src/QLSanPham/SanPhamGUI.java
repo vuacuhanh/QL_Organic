@@ -2,90 +2,107 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
+package QLSanPham;
 
-package QLKhachHang;
-import static org.neo4j.driver.GraphDatabase.driver;
-import ConnectingNeo4j.ConnectDB;
-import java.awt.Color;
-import java.util.Date;
-import org.neo4j.driver.Result;
-import org.neo4j.driver.Record;
-import org.neo4j.driver.Session;
-import java.util.Map;
-import java.util.Vector;
-import javax.swing.table.DefaultTableModel;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import QLSanPham.SanPham;
+import QLSanPham.TTSanPham;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
-import java.time.LocalDate;
-import org.neo4j.driver.Driver;
+import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
- * @author User
+ * @author AnnKiz
  */
-public class frmKhachHang extends javax.swing.JFrame {
-
+public class SanPhamGUI extends javax.swing.JFrame {
+    private SanPham sanPham; // Đối tượng để lấy danh sách sản phẩm
+    private DefaultTableModel tableModel; // Model cho JTable
     /**
-     * Creates new form frmKhachHang
+     * Creates new form SanPhamGUI
      */
-    private ConnectDB connectDB;
-    private javax.swing.JCheckBox chkVIP;
-    private Driver driver;
-    
-    public frmKhachHang() {
+    public SanPhamGUI() {
         initComponents();
-        connectDB = new ConnectDB();
-        driver = connectDB.getDriver();
-        chkVIP = new javax.swing.JCheckBox();
-        KhachHang_Load();
-    }
-
-    public void KhachHang_Load() {
-    String query = "MATCH (c:Customer) RETURN c.MaKH AS MaKH, c.TenKH AS TenKH, c.SDT AS SDT, c.DiaChi AS DiaChi, c.GioiTinh AS GioiTinh, c.SoThich AS SoThich, c.SoLuongMua AS SoLuongMua,c.VIP_Status AS VIP_Status, c.NgayDangKy AS NgayDangKy";//, k.VIP_Status AS VIP_Status, k.NgayDangKy AS NgayDangKy
-
-    try (Session session = connectDB.getDriver().session()) {
-        Result resultSet = session.run(query);
-        System.out.println("Kết nối thành công, đang lấy dữ liệu...");
-
-        String[] columns = {"MaKH", "TenKH", "SDT", "DiaChi", "GioiTinh", "SoThich", "SoLuongMua", "VIP_Status", "NgayDangKy"};//, "VIP_Status", "NgayDangKy"
-        DefaultTableModel model = new DefaultTableModel(columns, 0);
-        listKH.setModel(model); 
-
-        while (resultSet.hasNext()) {
-            Record record = resultSet.next();
-            Vector<Object> row = new Vector<>();
-
-            for (String column : columns) {
-                Object value = record.get(column).isNull() ? "" : record.get(column).asObject();
-                if (column.equals("VIP_Status") && value instanceof Long) {
-                    value = ((Long) value) != 0;
+        sanPham = new SanPham(); // Khởi tạo đối tượng SanPham
+        tableModel = (DefaultTableModel) tblSanPham.getModel(); // Lấy model từ JTable
+        loadProducts(); // Gọi hàm để load sản phẩm vào bảng
+        
+         // Thêm listener cho tblSanPham
+        tblSanPham.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) { // Chỉ xử lý khi sự kiện không đang điều chỉnh
+                    int selectedRow = tblSanPham.getSelectedRow(); // Lấy chỉ số hàng được chọn
+                    if (selectedRow != -1) { // Kiểm tra xem có hàng nào được chọn không
+                        // Lấy thông tin sản phẩm từ hàng được chọn
+                        updateFieldsFromSelectedRow(selectedRow);
+                    }
                 }
-                row.add(value);
             }
-            model.addRow(row);
-            System.out.println("Đã thêm hàng: " + row); // In ra hàng đã thêm
+        });
+        btnTimKiem.addActionListener(new java.awt.event.ActionListener() {
+    public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnTimKiemActionPerformed(evt);
+    }
+});
+
+    }
+    
+    
+     // Hàm để load danh sách sản phẩm vào bảng tblSanPham
+    // Hàm để load sản phẩm vào bảng
+    private void loadProducts() {
+        // Lấy danh sách sản phẩm
+        List<TTSanPham> danhSach = sanPham.getDanhSachSanPham();
+
+        // Xóa tất cả dữ liệu hiện có trong bảng
+        tableModel.setRowCount(0);
+
+        // Thêm dữ liệu sản phẩm vào bảng
+        for (TTSanPham sp : danhSach) {
+            Object[] row = {
+                sp.getMaSP(),
+                sp.getTenSP(),
+                sp.getGiaTien(),
+                sp.getMoTa(),
+                sp.getDonViTinh(),
+                sp.getXuatXu(),
+                sp.getSoLuongTonKho()
+            };
+            tableModel.addRow(row); // Thêm hàng vào bảng
         }
-
-        System.out.println("Dữ liệu đã được tải thành công.");
-    } catch (Exception e) {
-        Logger.getLogger(frmKhachHang.class.getName()).log(Level.SEVERE, null, e);
     }
-}
+    
+    // Cập nhật các JTextField từ hàng được chọn
+    private void updateFieldsFromSelectedRow(int selectedRow) {
+        // Lấy giá trị từ bảng
+        String maSP = (String) tableModel.getValueAt(selectedRow, 0);
+        String tenSP = (String) tableModel.getValueAt(selectedRow, 1);
+        double gia = (Double) tableModel.getValueAt(selectedRow, 2);
+        String moTa = (String) tableModel.getValueAt(selectedRow, 3);
+        String dvt = (String) tableModel.getValueAt(selectedRow, 4);
+        String xuatXu = (String) tableModel.getValueAt(selectedRow, 5);
+        int soLuongTonKho = (Integer) tableModel.getValueAt(selectedRow, 6);
 
-    public void LamMoi(){
-        txtMaKH.setText("");
-        txtTenKH.setText("");  
-        txtSDT.setText("");
-        txtDChi.setText("");
-        gtNam.setSelected(false);  
-        gtNu.setSelected(false);  
-        txtSoThich.setText("");
-        jRKhachVIP.setSelected(false);
-        jRKhachBTH.setSelected(false);
-        txtSoLuongMua.setText("");
-        txtNgayDangKy.setText("");
+        // Cập nhật các JTextField
+        txtMaSP.setText(maSP);
+        txtTenSP.setText(tenSP);
+        txtGia.setText(String.valueOf(gia));
+        txtMoTa.setText(moTa);
+        txtDVT.setText(dvt);
+        txtXuatXu.setText(xuatXu);
+        txtSoLuongTonKho.setText(String.valueOf(soLuongTonKho));
     }
+
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -97,7 +114,7 @@ public class frmKhachHang extends javax.swing.JFrame {
 
         jpnKhachHang = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        listKH = new javax.swing.JTable();
+        tblSanPham = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
@@ -107,30 +124,28 @@ public class frmKhachHang extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         panelBoderFrm1 = new PanelBoder.PanelBoderFrm();
         jLabel1 = new javax.swing.JLabel();
-        txtMaKH = new javax.swing.JTextField();
+        txtMaSP = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        txtTenKH = new javax.swing.JTextField();
-        GioiTinh = new javax.swing.JLabel();
+        txtTenSP = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        gtNam = new javax.swing.JRadioButton();
-        gtNu = new javax.swing.JRadioButton();
         jLabel5 = new javax.swing.JLabel();
-        txtDChi = new javax.swing.JTextField();
+        txtMoTa = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        txtSoThich = new javax.swing.JTextField();
+        txtDVT = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
         panelBoderFrm2 = new PanelBoder.PanelBoderFrm();
-        btnThem = new javax.swing.JButton();
+        btnThemSanPham = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnCapNhat = new javax.swing.JButton();
         btnReset = new javax.swing.JButton();
-        txtSDT = new javax.swing.JTextField();
-        txtSoLuongMua = new javax.swing.JTextField();
-        txtNgayDangKy = new javax.swing.JTextField();
-        jRKhachVIP = new javax.swing.JRadioButton();
-        jRKhachBTH = new javax.swing.JRadioButton();
+        txtGia = new javax.swing.JTextField();
+        txtSoLuongTonKho = new javax.swing.JTextField();
+        txtXuatXu = new javax.swing.JTextField();
+        panelBoderFrm3 = new PanelBoder.PanelBoderFrm();
+        btnTimKiem = new javax.swing.JButton();
+        txtTimKiem = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
 
@@ -138,37 +153,37 @@ public class frmKhachHang extends javax.swing.JFrame {
 
         jpnKhachHang.setBackground(new java.awt.Color(0, 51, 102));
 
-        listKH.setModel(new javax.swing.table.DefaultTableModel(
+        tblSanPham.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã khách hàng", "Tên khách hàng", "Giới tính", "Số điện thoại", "Địa chỉ", "Sở thích", "khách VIP", "Số lượng mua", "Ngày đăng kí"
+                "Mã sản phẩm", "Tên sản phẩm", "Giá tiền", "Mô tả", "Đơn vị tính", "Xuất xứ", "Số lượng tồn kho"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Integer.class, java.lang.Object.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
         });
-        listKH.setSelectionBackground(new java.awt.Color(0, 153, 153));
-        listKH.addMouseListener(new java.awt.event.MouseAdapter() {
+        tblSanPham.setSelectionBackground(new java.awt.Color(0, 153, 153));
+        tblSanPham.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                listKHMouseClicked(evt);
+                tblSanPhamMouseClicked(evt);
             }
         });
-        listKH.addKeyListener(new java.awt.event.KeyAdapter() {
+        tblSanPham.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                listKHKeyReleased(evt);
+                tblSanPhamKeyReleased(evt);
             }
         });
-        jScrollPane3.setViewportView(listKH);
+        jScrollPane3.setViewportView(tblSanPham);
 
         jPanel1.setLayout(new java.awt.GridLayout(1, 4, 2, 2));
 
@@ -177,7 +192,7 @@ public class frmKhachHang extends javax.swing.JFrame {
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(0, 51, 102));
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel12.setText("Thông tin khách hàng");
+        jLabel12.setText("Thông tin sản phẩm");
 
         panelBoderCircle1.setBackground(new java.awt.Color(0, 51, 102));
         panelBoderCircle1.setForeground(new java.awt.Color(0, 51, 102));
@@ -239,7 +254,7 @@ public class frmKhachHang extends javax.swing.JFrame {
         jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(0, 51, 102));
         jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel13.setText("Danh sách khách hàng");
+        jLabel13.setText("Danh sách sản phẩm");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -262,66 +277,45 @@ public class frmKhachHang extends javax.swing.JFrame {
 
         jLabel1.setBackground(new java.awt.Color(0, 204, 204));
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel1.setText("Mã Khách hàng:");
+        jLabel1.setText("Mã sản phẩm:");
 
-        txtMaKH.addActionListener(new java.awt.event.ActionListener() {
+        txtMaSP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMaKHActionPerformed(evt);
+                txtMaSPActionPerformed(evt);
             }
         });
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel2.setText("Tên khách hàng");
+        jLabel2.setText("Tên sản phẩm");
 
-        txtTenKH.addActionListener(new java.awt.event.ActionListener() {
+        txtTenSP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTenKHActionPerformed(evt);
+                txtTenSPActionPerformed(evt);
             }
         });
-
-        GioiTinh.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        GioiTinh.setText("Giới tính");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel4.setText("Số điện thoại");
-
-        gtNam.setText("Nam");
-        gtNam.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                gtNamActionPerformed(evt);
-            }
-        });
-
-        gtNu.setSelected(true);
-        gtNu.setText("Nữ");
-        gtNu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                gtNuActionPerformed(evt);
-            }
-        });
+        jLabel4.setText("Giá tiền");
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel5.setText("Địa chỉ:");
+        jLabel5.setText("Mô tả");
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel6.setText("Sở thích");
+        jLabel6.setText("Đơn vị tính");
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel7.setText("Khách VIP");
+        jLabel7.setText("Xuất xứ");
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel8.setText("Số lượng mua");
-
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel9.setText("Ngày đăng ký");
+        jLabel8.setText("Số lượng tồn kho");
 
         panelBoderFrm2.setBackground(new java.awt.Color(0, 51, 102));
 
-        btnThem.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnThem.setText("Thêm");
-        btnThem.addActionListener(new java.awt.event.ActionListener() {
+        btnThemSanPham.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnThemSanPham.setText("Thêm");
+        btnThemSanPham.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnThemActionPerformed(evt);
+                btnThemSanPhamActionPerformed(evt);
             }
         });
 
@@ -355,7 +349,7 @@ public class frmKhachHang extends javax.swing.JFrame {
             panelBoderFrm2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBoderFrm2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnThemSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(17, 17, 17)
@@ -371,15 +365,48 @@ public class frmKhachHang extends javax.swing.JFrame {
                 .addGroup(panelBoderFrm2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panelBoderFrm2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnThem, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnThemSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnCapNhat, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
-        jRKhachVIP.setText("Yes");
+        panelBoderFrm3.setBackground(new java.awt.Color(0, 51, 102));
 
-        jRKhachBTH.setText("No");
+        btnTimKiem.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        btnTimKiem.setText("Tìm kiếm sản phẩm");
+        btnTimKiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTimKiemActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Nhập thông tin :");
+
+        javax.swing.GroupLayout panelBoderFrm3Layout = new javax.swing.GroupLayout(panelBoderFrm3);
+        panelBoderFrm3.setLayout(panelBoderFrm3Layout);
+        panelBoderFrm3Layout.setHorizontalGroup(
+            panelBoderFrm3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBoderFrm3Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
+                .addComponent(btnTimKiem)
+                .addContainerGap())
+        );
+        panelBoderFrm3Layout.setVerticalGroup(
+            panelBoderFrm3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBoderFrm3Layout.createSequentialGroup()
+                .addContainerGap(31, Short.MAX_VALUE)
+                .addGroup(panelBoderFrm3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(24, 24, 24))
+        );
 
         javax.swing.GroupLayout panelBoderFrm1Layout = new javax.swing.GroupLayout(panelBoderFrm1);
         panelBoderFrm1.setLayout(panelBoderFrm1Layout);
@@ -388,103 +415,82 @@ public class frmKhachHang extends javax.swing.JFrame {
             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBoderFrm1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(panelBoderFrm2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelBoderFrm1Layout.createSequentialGroup()
+                        .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtSoThich, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtDVT, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRKhachVIP, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jRKhachBTH, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtXuatXu, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtSoLuongMua, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtNgayDangKy, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtSoLuongTonKho, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtDChi, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtMoTa, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtMaKH, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtMaSP, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                                .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(GioiTinh, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                                        .addComponent(gtNam, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(38, 38, 38)
-                                        .addComponent(gtNu, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(txtTenKH, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(txtTenSP, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(108, 108, 108))
-                    .addComponent(panelBoderFrm2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(txtGia, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(panelBoderFrm3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelBoderFrm1Layout.setVerticalGroup(
             panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
+                .addGap(28, 28, 28)
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtMaKH, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtMaSP, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTenKH, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16)
-                .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(GioiTinh, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(gtNam, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(gtNu, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTenSP, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSDT, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(txtGia, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtDChi, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(txtMoTa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSoThich, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(txtDVT, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRKhachVIP)
-                    .addComponent(jRKhachBTH))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(txtXuatXu, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSoLuongMua, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNgayDangKy, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(77, 77, 77)
+                    .addComponent(txtSoLuongTonKho, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
                 .addComponent(panelBoderFrm2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
+                .addGap(29, 29, 29)
+                .addComponent(panelBoderFrm3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(71, Short.MAX_VALUE))
         );
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel11.setText("QUẢN LÝ KHÁCH HÀNG");
+        jLabel11.setText("QUẢN LÝ SẢN PHẨM");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -524,13 +530,13 @@ public class frmKhachHang extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 737, Short.MAX_VALUE))))
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE))))
                 .addContainerGap())
             .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jpnKhachHangLayout.createSequentialGroup()
                     .addGap(429, 429, 429)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(784, Short.MAX_VALUE)))
+                    .addContainerGap(730, Short.MAX_VALUE)))
         );
         jpnKhachHangLayout.setVerticalGroup(
             jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -542,10 +548,10 @@ public class frmKhachHang extends javax.swing.JFrame {
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelBoderFrm1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane3))
-                .addContainerGap(98, Short.MAX_VALUE))
+                .addContainerGap())
             .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jpnKhachHangLayout.createSequentialGroup()
                     .addContainerGap(814, Short.MAX_VALUE)
@@ -561,206 +567,192 @@ public class frmKhachHang extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpnKhachHang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jpnKhachHang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void listKHMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listKHMouseClicked
-        LamMoi(); // Reset fields
-        int selectedIndex = listKH.getSelectedRow();
-        if (selectedIndex < 0) return; 
+    private void tblSanPhamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSanPhamMouseClicked
     
-        txtMaKH.setText(listKH.getValueAt(selectedIndex, 0).toString());
-        txtTenKH.setText(listKH.getValueAt(selectedIndex, 1).toString());
-    
-        String sex = listKH.getValueAt(selectedIndex, 4).toString();
-        // Reset RadioButton selection
-        gtNam.setSelected(false);
-        gtNu.setSelected(false);
-    
-        // Set selected RadioButton based on the value from the table
-        if ("Nam".equals(sex)) {
-            gtNam.setSelected(true);
-        } else if ("Nữ".equals(sex)) {
-            gtNu.setSelected(true);
-        }
-    
-        txtSDT.setText(listKH.getValueAt(selectedIndex, 2).toString());
-        txtDChi.setText(listKH.getValueAt(selectedIndex, 3).toString());
-        txtSoThich.setText(listKH.getValueAt(selectedIndex, 5).toString());
-        txtSoLuongMua.setText(listKH.getValueAt(selectedIndex, 6).toString());
+    }//GEN-LAST:event_tblSanPhamMouseClicked
 
-        // Kiểm tra `chkVIP` trước khi thiết lập giá trị
-        if (listKH.getValueAt(selectedIndex, 7) != null) {
-        boolean isVIP = (Boolean) listKH.getValueAt(selectedIndex, 7);
-        if (isVIP) {
-            jRKhachVIP.setSelected(true);  // Chọn nút Yes nếu là VIP
-            jRKhachBTH.setSelected(false);  // Hủy chọn nút No
-        } else {
-            jRKhachVIP.setSelected(false); // Hủy chọn nút Yes
-            jRKhachBTH.setSelected(true);   // Chọn nút No nếu không phải VIP
-        }
-        } else {
-        // Nếu không có giá trị, hủy chọn cả hai nút
-            jRKhachVIP.setSelected(false);
-            jRKhachBTH.setSelected(false);
-        }
-        Object dateValue = listKH.getValueAt(selectedIndex, 8);
-        if (dateValue != null) {
-            if (dateValue instanceof String) {
-                // Nếu giá trị là chuỗi, chuyển đổi thành LocalDate
-                LocalDate ngayDangKy = LocalDate.parse(dateValue.toString());
-                txtNgayDangKy.setText(ngayDangKy.toString());
-            } else if (dateValue instanceof LocalDate) {
-                // Nếu giá trị đã là LocalDate
-                LocalDate ngayDangKy = (LocalDate) dateValue;
-                txtNgayDangKy.setText(ngayDangKy.toString());
-            } else {
-                System.out.println("Kiểu dữ liệu không hỗ trợ: " + dateValue.getClass().getName());
-            }
-        } else {
-            txtNgayDangKy.setText(""); // Nếu không có giá trị, để trống
-        }
-    }//GEN-LAST:event_listKHMouseClicked
+    private void tblSanPhamKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblSanPhamKeyReleased
 
-    private void listKHKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_listKHKeyReleased
-        
-    }//GEN-LAST:event_listKHKeyReleased
+    }//GEN-LAST:event_tblSanPhamKeyReleased
 
-    private void txtMaKHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaKHActionPerformed
+    private void txtMaSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaSPActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtMaKHActionPerformed
+    }//GEN-LAST:event_txtMaSPActionPerformed
 
-    private void txtTenKHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenKHActionPerformed
+    private void txtTenSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenSPActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenKHActionPerformed
+    }//GEN-LAST:event_txtTenSPActionPerformed
 
-    private void gtNamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gtNamActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_gtNamActionPerformed
+    private void btnThemSanPhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemSanPhamActionPerformed
+// Khi nhấn nút thêm sản phẩm
+    // Lấy thông tin từ các JTextField
+    String maSP = txtMaSP.getText();
+    String tenSP = txtTenSP.getText();
+    double giaTien = Double.parseDouble(txtGia.getText());
+    String moTa = txtMoTa.getText();
+    String donViTinh = txtDVT.getText();
+    String xuatXu = txtXuatXu.getText();
+    int soLuongTonKho = Integer.parseInt(txtSoLuongTonKho.getText());
 
-    private void gtNuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gtNuActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_gtNuActionPerformed
-    private boolean isVIP(int soLuongMua) {
-        return soLuongMua > 100;
+    // Tạo đối tượng sản phẩm
+    TTSanPham sp = new TTSanPham(maSP, tenSP, giaTien, moTa, donViTinh, xuatXu, soLuongTonKho);
+
+    // Thêm sản phẩm vào cơ sở dữ liệu
+    SanPham sanPham = new SanPham();
+    boolean success = sanPham.themSanPhamMoi(sp);
+
+   
+ if (success) {
+        JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công!");
+
+        // Thêm sản phẩm mới vào bảng
+        DefaultTableModel model = (DefaultTableModel) tblSanPham.getModel();
+        model.addRow(new Object[]{maSP, tenSP, giaTien, moTa, donViTinh, xuatXu, soLuongTonKho});
+
+        // Sắp xếp bảng theo mã sản phẩm
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(tblSanPham.getModel());
+        tblSanPham.setRowSorter(sorter);
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+
+        // Sắp xếp theo cột Mã sản phẩm (giả sử cột đầu tiên là Mã sản phẩm)
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING)); // Cột 0 là cột Mã sản phẩm
+        sorter.setSortKeys(sortKeys);
+        sorter.sort();
+
+        // Chọn dòng cuối cùng trong bảng sau khi sắp xếp
+        int rowCount = tblSanPham.getRowCount();
+        if (rowCount > 0) {
+            tblSanPham.setRowSelectionInterval(rowCount - 1, rowCount - 1); // Chọn dòng cuối
+            tblSanPham.scrollRectToVisible(tblSanPham.getCellRect(rowCount - 1, 0, true)); // Cuộn đến dòng cuối
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi thêm sản phẩm.");
     }
-    
-    public boolean checkMaKHExists(String maKH) {
-        String query = "MATCH (c:Customer {MaKH: $maKH}) RETURN c";
 
-        try (Session session = driver.session()) {
-            return session.readTransaction(tx -> {
-                var result = tx.run(query, org.neo4j.driver.Values.parameters("maKH", maKH));
-                return result.hasNext(); // Trả về true nếu mã khách hàng tồn tại
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
-        StringBuilder sb = new StringBuilder();
-        if (txtMaKH.getText().equals("")) {
-            sb.append("Mã khách hàng không được để trống!!!");
-            txtMaKH.setBackground(Color.yellow);
-        } else {
-            txtMaKH.setBackground(Color.white);
-        }
-        if (sb.length() > 0) {
-            JOptionPane.showMessageDialog(this, sb);
-            return;
-        }
-        try {
-            KHACH_HANG dao = new KHACH_HANG(driver); 
-            if (checkMaKHExists(txtMaKH.getText())) {
-                JOptionPane.showMessageDialog(this, "Mã khách hàng đã tồn tại. Vui lòng nhập mã khác!");
-            return;
-            }
-            TTKhachHang khachHang = new TTKhachHang();
-            khachHang.setMaKH(txtMaKH.getText());
-            khachHang.setTenKH(txtTenKH.getText());
-            khachHang.setSDT(txtSDT.getText());
-            khachHang.setDiaChi(txtDChi.getText());
-            khachHang.setGioiTinh(gtNam.isSelected() ? gtNam.getText() : gtNu.getText());
-            khachHang.setSoThich(txtSoThich.getText());
-            int soLuongMua = Integer.parseInt(txtSoLuongMua.getText());
-            khachHang.setSoLuongMua(soLuongMua);
-            // Thiết lập trạng thái VIP dựa trên số lượng mua
-            khachHang.setVIP_Status(isVIP(soLuongMua));
-            khachHang.setNgayDangKy(LocalDate.now()); 
-            dao.insert(khachHang);
-            JOptionPane.showMessageDialog(this, "Khách hàng được thêm vào thành công!");
-            KhachHang_Load();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-            }
-    }//GEN-LAST:event_btnThemActionPerformed
+    }//GEN-LAST:event_btnThemSanPhamActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-       String maKH = txtMaKH.getText(); // Giả sử bạn có một TextField để nhập Mã KH
-
-        if (maKH.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã khách hàng để xóa!");
-            return;
-        }
-
-        try {
-            KHACH_HANG dao = new KHACH_HANG(driver);
-            boolean isDeleted = dao.delete(maKH);
-            if (isDeleted) {
-                JOptionPane.showMessageDialog(this, "Khách hàng đã được xóa thành công!");
-                // Cập nhật lại JTable
-                KhachHang_Load(); 
-            } else {
-                JOptionPane.showMessageDialog(this, "Xóa không thành công!");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-        }
-    }//GEN-LAST:event_btnDeleteActionPerformed
-
-    private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapNhatActionPerformed
-        String maKH = txtMaKH.getText(); // Giả sử bạn có một TextField để nhập Mã KH
-
-    if (maKH.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã khách hàng để sửa!");
+// Kiểm tra xem có dòng nào được chọn trong bảng không
+    int selectedRow = tblSanPham.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm cần xóa.");
         return;
     }
 
-    try {
-        TTKhachHang khachHang = new TTKhachHang();
-        khachHang.setMaKH(maKH);
-        khachHang.setTenKH(txtTenKH.getText());
-        khachHang.setSDT(txtSDT.getText());
-        khachHang.setDiaChi(txtDChi.getText());
-        khachHang.setGioiTinh(gtNam.isSelected() ? gtNam.getText() : gtNu.getText());
-        khachHang.setSoThich(txtSoThich.getText());
-        int soLuongMua = Integer.parseInt(txtSoLuongMua.getText());
-        khachHang.setSoLuongMua(soLuongMua);
-        // Thiết lập trạng thái VIP dựa trên số lượng mua
-        khachHang.setVIP_Status(isVIP(soLuongMua));
-        khachHang.setNgayDangKy(LocalDate.now());
+    // Lấy mã sản phẩm của dòng được chọn
+    String maSP = tblSanPham.getValueAt(selectedRow, 0).toString();  // Cột 0 là cột MaSP
 
-        KHACH_HANG dao = new KHACH_HANG(driver); 
-        boolean isUpdated = dao.update(khachHang);
-        if (isUpdated) {
-            JOptionPane.showMessageDialog(this, "Khách hàng đã được cập nhật thành công!");
-            // Cập nhật lại JTable
-            KhachHang_Load(); 
+    // Xác nhận việc xóa sản phẩm
+    int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa sản phẩm này không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+    if (confirm == JOptionPane.YES_OPTION) {
+        // Xóa sản phẩm từ cơ sở dữ liệu Neo4j
+        SanPham sanPham = new SanPham();
+        boolean success = sanPham.xoaSanPham(maSP);
+
+        if (success) {
+            // Xóa dòng khỏi bảng
+            DefaultTableModel model = (DefaultTableModel) tblSanPham.getModel();
+            model.removeRow(selectedRow);
+
+            JOptionPane.showMessageDialog(this, "Sản phẩm đã được xóa thành công!");
         } else {
-            JOptionPane.showMessageDialog(this, "Cập nhật không thành công!");
+            JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi xóa sản phẩm.");
         }
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+
+        sanPham.closeConnection();  // Đóng kết nối Neo4j
     }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapNhatActionPerformed
+         // Kiểm tra xem có dòng nào được chọn trong bảng không
+    int selectedRow = tblSanPham.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm cần sửa.");
+        return;
+    }
+
+    // Lấy thông tin từ các trường nhập liệu
+    String maSP = txtMaSP.getText();
+    String tenSP = txtTenSP.getText();
+    double giaTien = Double.parseDouble(txtGia.getText());
+    String moTa = txtMoTa.getText();
+    String donViTinh = txtDVT.getText();
+    String xuatXu = txtXuatXu.getText();
+    int soLuongTonKho = Integer.parseInt(txtSoLuongTonKho.getText());
+
+    // Tạo đối tượng sản phẩm với thông tin mới
+    TTSanPham sp = new TTSanPham(maSP, tenSP, giaTien, moTa, donViTinh, xuatXu, soLuongTonKho);
+
+    // Sửa sản phẩm trong cơ sở dữ liệu
+    SanPham sanPham = new SanPham();
+    boolean success = sanPham.suaSanPham(sp);
+
+    if (success) {
+        // Cập nhật bảng hiển thị
+        DefaultTableModel model = (DefaultTableModel) tblSanPham.getModel();
+        model.setValueAt(sp.getMaSP(), selectedRow, 0);  // Cập nhật MaSP tại dòng được chọn
+        model.setValueAt(sp.getTenSP(), selectedRow, 1); // Cập nhật TenSP tại dòng được chọn
+        model.setValueAt(sp.getGiaTien(), selectedRow, 2); // Cập nhật GiaTien tại dòng được chọn
+        model.setValueAt(sp.getMoTa(), selectedRow, 3); // Cập nhật MoTa tại dòng được chọn
+        model.setValueAt(sp.getDonViTinh(), selectedRow, 4); // Cập nhật DonViTinh tại dòng được chọn
+        model.setValueAt(sp.getXuatXu(), selectedRow, 5); // Cập nhật XuatXu tại dòng được chọn
+        model.setValueAt(sp.getSoLuongTonKho(), selectedRow, 6); // Cập nhật SoLuongTonKho tại dòng được chọn
+
+        JOptionPane.showMessageDialog(this, "Sản phẩm đã được sửa thành công!");
+    } else {
+        JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi sửa sản phẩm.");
+    }
+
+    sanPham.closeConnection();  // Đóng kết nối Neo4j
     }//GEN-LAST:event_btnCapNhatActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        LamMoi();
+  // Đặt lại tất cả các JTextField về trống
+    txtMaSP.setText("");         // Reset mã sản phẩm
+    txtTenSP.setText("");        // Reset tên sản phẩm
+    txtGia.setText("");          // Reset giá tiền
+    txtMoTa.setText("");         // Reset mô tả
+    txtDVT.setText("");          // Reset đơn vị tính
+    txtXuatXu.setText("");       // Reset xuất xứ
+    txtSoLuongTonKho.setText(""); // Reset số lượng tồn kho
     }//GEN-LAST:event_btnResetActionPerformed
+
+    private void btnTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimKiemActionPerformed
+        // TODO add your handling code here:
+         String tuKhoa = txtTimKiem.getText().trim(); // Lấy từ khóa từ text field
+    if (!tuKhoa.isEmpty()) {
+        SanPham sanPham = new SanPham(); // Tạo đối tượng SanPham để truy cập hàm tìm kiếm
+        List<TTSanPham> danhSachTimKiem = sanPham.timKiemSanPham(tuKhoa);
+
+        // Cập nhật dữ liệu vào bảng
+        DefaultTableModel model = (DefaultTableModel) tblSanPham.getModel();
+        model.setRowCount(0); // Xóa dữ liệu cũ trên bảng
+
+        for (TTSanPham sp : danhSachTimKiem) {
+            model.addRow(new Object[]{
+                sp.getMaSP(),
+                sp.getTenSP(),
+                sp.getGiaTien(),
+                sp.getMoTa(),
+                sp.getDonViTinh(),
+                sp.getXuatXu(),
+                sp.getSoLuongTonKho()
+            });
+        }
+        
+        sanPham.closeConnection(); // Đóng kết nối sau khi tìm kiếm xong
+    } else {
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập từ khóa để tìm kiếm!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+    }
+    }//GEN-LAST:event_btnTimKiemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -779,62 +771,60 @@ public class frmKhachHang extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(frmKhachHang.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SanPhamGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmKhachHang.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SanPhamGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(frmKhachHang.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SanPhamGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(frmKhachHang.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SanPhamGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmKhachHang().setVisible(true);
+                new SanPhamGUI().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel GioiTinh;
     private javax.swing.JButton btnCapNhat;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnReset;
-    private javax.swing.JButton btnThem;
-    private javax.swing.JRadioButton gtNam;
-    private javax.swing.JRadioButton gtNu;
+    private javax.swing.JButton btnThemSanPham;
+    private javax.swing.JButton btnTimKiem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JRadioButton jRKhachBTH;
-    private javax.swing.JRadioButton jRKhachVIP;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel jpnKhachHang;
-    private javax.swing.JTable listKH;
     private PanelBoder.PanelBoderCircle panelBoderCircle1;
     private PanelBoder.PanelBoderCircle panelBoderCircle2;
     private PanelBoder.PanelBoderFrm panelBoderFrm1;
     private PanelBoder.PanelBoderFrm panelBoderFrm2;
-    private javax.swing.JTextField txtDChi;
-    private javax.swing.JTextField txtMaKH;
-    private javax.swing.JTextField txtNgayDangKy;
-    private javax.swing.JTextField txtSDT;
-    private javax.swing.JTextField txtSoLuongMua;
-    private javax.swing.JTextField txtSoThich;
-    private javax.swing.JTextField txtTenKH;
+    private PanelBoder.PanelBoderFrm panelBoderFrm3;
+    private javax.swing.JTable tblSanPham;
+    private javax.swing.JTextField txtDVT;
+    private javax.swing.JTextField txtGia;
+    private javax.swing.JTextField txtMaSP;
+    private javax.swing.JTextField txtMoTa;
+    private javax.swing.JTextField txtSoLuongTonKho;
+    private javax.swing.JTextField txtTenSP;
+    private javax.swing.JTextField txtTimKiem;
+    private javax.swing.JTextField txtXuatXu;
     // End of variables declaration//GEN-END:variables
 }
