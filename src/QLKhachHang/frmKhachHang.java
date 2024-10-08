@@ -4,7 +4,9 @@
  */
 
 package QLKhachHang;
+import static org.neo4j.driver.GraphDatabase.driver;
 import ConnectingNeo4j.ConnectDB;
+import java.awt.Color;
 import java.util.Date;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Record;
@@ -14,6 +16,10 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import java.time.LocalDate;
+import org.neo4j.driver.Driver;
+
 /**
  *
  * @author User
@@ -24,15 +30,14 @@ public class frmKhachHang extends javax.swing.JFrame {
      * Creates new form frmKhachHang
      */
     private ConnectDB connectDB;
-
+    private javax.swing.JCheckBox chkVIP;
+    private Driver driver;
+    
     public frmKhachHang() {
         initComponents();
         connectDB = new ConnectDB();
-        if (connectDB.getDriver() == null) {
-            System.out.println("Không thể kết nối tới cơ sở dữ liệu.");
-        } else {
-            System.out.println("Kết nối tới cơ sở dữ liệu thành công.");
-        }
+        driver = connectDB.getDriver();
+        chkVIP = new javax.swing.JCheckBox();
         KhachHang_Load();
     }
 
@@ -71,12 +76,15 @@ public class frmKhachHang extends javax.swing.JFrame {
     public void LamMoi(){
         txtMaKH.setText("");
         txtTenKH.setText("");  
-        txtSDT.setText("");    
+        txtSDT.setText("");
+        txtDChi.setText("");
         gtNam.setSelected(false);  
         gtNu.setSelected(false);  
         txtSoThich.setText("");
-        txtKhachVIP.setText("");
-        //jdNgayDangKy.setDate(null);
+        jRKhachVIP.setSelected(false);
+        jRKhachBTH.setSelected(false);
+        txtSoLuongMua.setText("");
+        txtNgayDangKy.setText("");
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -120,7 +128,9 @@ public class frmKhachHang extends javax.swing.JFrame {
         btnReset = new javax.swing.JButton();
         txtSDT = new javax.swing.JTextField();
         txtSoLuongMua = new javax.swing.JTextField();
-        txtKhachVIP = new javax.swing.JTextField();
+        txtNgayDangKy = new javax.swing.JTextField();
+        jRKhachVIP = new javax.swing.JRadioButton();
+        jRKhachBTH = new javax.swing.JRadioButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
 
@@ -167,7 +177,7 @@ public class frmKhachHang extends javax.swing.JFrame {
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(0, 51, 102));
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel12.setText("Thông tin nhân viên");
+        jLabel12.setText("Thông tin khách hàng");
 
         panelBoderCircle1.setBackground(new java.awt.Color(0, 51, 102));
         panelBoderCircle1.setForeground(new java.awt.Color(0, 51, 102));
@@ -229,7 +239,7 @@ public class frmKhachHang extends javax.swing.JFrame {
         jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(0, 51, 102));
         jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel13.setText("Danh sách nhân viên");
+        jLabel13.setText("Danh sách khách hàng");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -367,6 +377,10 @@ public class frmKhachHang extends javax.swing.JFrame {
                 .addContainerGap(28, Short.MAX_VALUE))
         );
 
+        jRKhachVIP.setText("Yes");
+
+        jRKhachBTH.setText("No");
+
         javax.swing.GroupLayout panelBoderFrm1Layout = new javax.swing.GroupLayout(panelBoderFrm1);
         panelBoderFrm1.setLayout(panelBoderFrm1Layout);
         panelBoderFrm1Layout.setHorizontalGroup(
@@ -376,7 +390,7 @@ public class frmKhachHang extends javax.swing.JFrame {
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBoderFrm1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -384,12 +398,17 @@ public class frmKhachHang extends javax.swing.JFrame {
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtKhachVIP, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jRKhachVIP, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jRKhachBTH, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtSoLuongMua, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(panelBoderFrm1Layout.createSequentialGroup()
+                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtNgayDangKy, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -448,13 +467,16 @@ public class frmKhachHang extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtKhachVIP, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jRKhachVIP)
+                    .addComponent(jRKhachBTH))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtSoLuongMua, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNgayDangKy, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(77, 77, 77)
                 .addComponent(panelBoderFrm2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
@@ -551,15 +573,58 @@ public class frmKhachHang extends javax.swing.JFrame {
         LamMoi(); // Reset fields
         int selectedIndex = listKH.getSelectedRow();
         if (selectedIndex < 0) return; 
+    
         txtMaKH.setText(listKH.getValueAt(selectedIndex, 0).toString());
         txtTenKH.setText(listKH.getValueAt(selectedIndex, 1).toString());
-        txtSDT.setText(listKH.getValueAt(selectedIndex, 2).toString());
+    
         String sex = listKH.getValueAt(selectedIndex, 4).toString();
-        gtNam.setSelected("Nam".equals(sex));
-        gtNu.setSelected("Nữ".equals(sex));
-        txtDChi.setText(listKH.getValueAt(selectedIndex, 5).toString());
-        txtSoThich.setText(listKH.getValueAt(selectedIndex, 6).toString());
-        //jdNgayDangKy.setDate((Date) listKH.getValueAt(selectedIndex, 8));
+        // Reset RadioButton selection
+        gtNam.setSelected(false);
+        gtNu.setSelected(false);
+    
+        // Set selected RadioButton based on the value from the table
+        if ("Nam".equals(sex)) {
+            gtNam.setSelected(true);
+        } else if ("Nữ".equals(sex)) {
+            gtNu.setSelected(true);
+        }
+    
+        txtSDT.setText(listKH.getValueAt(selectedIndex, 2).toString());
+        txtDChi.setText(listKH.getValueAt(selectedIndex, 3).toString());
+        txtSoThich.setText(listKH.getValueAt(selectedIndex, 5).toString());
+        txtSoLuongMua.setText(listKH.getValueAt(selectedIndex, 6).toString());
+
+        // Kiểm tra `chkVIP` trước khi thiết lập giá trị
+        if (listKH.getValueAt(selectedIndex, 7) != null) {
+        boolean isVIP = (Boolean) listKH.getValueAt(selectedIndex, 7);
+        if (isVIP) {
+            jRKhachVIP.setSelected(true);  // Chọn nút Yes nếu là VIP
+            jRKhachBTH.setSelected(false);  // Hủy chọn nút No
+        } else {
+            jRKhachVIP.setSelected(false); // Hủy chọn nút Yes
+            jRKhachBTH.setSelected(true);   // Chọn nút No nếu không phải VIP
+        }
+        } else {
+        // Nếu không có giá trị, hủy chọn cả hai nút
+            jRKhachVIP.setSelected(false);
+            jRKhachBTH.setSelected(false);
+        }
+        Object dateValue = listKH.getValueAt(selectedIndex, 8);
+        if (dateValue != null) {
+            if (dateValue instanceof String) {
+                // Nếu giá trị là chuỗi, chuyển đổi thành LocalDate
+                LocalDate ngayDangKy = LocalDate.parse(dateValue.toString());
+                txtNgayDangKy.setText(ngayDangKy.toString());
+            } else if (dateValue instanceof LocalDate) {
+                // Nếu giá trị đã là LocalDate
+                LocalDate ngayDangKy = (LocalDate) dateValue;
+                txtNgayDangKy.setText(ngayDangKy.toString());
+            } else {
+                System.out.println("Kiểu dữ liệu không hỗ trợ: " + dateValue.getClass().getName());
+            }
+        } else {
+            txtNgayDangKy.setText(""); // Nếu không có giá trị, để trống
+        }
     }//GEN-LAST:event_listKHMouseClicked
 
     private void listKHKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_listKHKeyReleased
@@ -581,21 +646,122 @@ public class frmKhachHang extends javax.swing.JFrame {
     private void gtNuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gtNuActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_gtNuActionPerformed
+    private boolean isVIP(int soLuongMua) {
+        return soLuongMua > 100;
+    }
+    
+    public boolean checkMaKHExists(String maKH) {
+        String query = "MATCH (c:Customer {MaKH: $maKH}) RETURN c";
 
+        try (Session session = driver.session()) {
+            return session.readTransaction(tx -> {
+                var result = tx.run(query, org.neo4j.driver.Values.parameters("maKH", maKH));
+                return result.hasNext(); // Trả về true nếu mã khách hàng tồn tại
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
-        
+        StringBuilder sb = new StringBuilder();
+        if (txtMaKH.getText().equals("")) {
+            sb.append("Mã khách hàng không được để trống!!!");
+            txtMaKH.setBackground(Color.yellow);
+        } else {
+            txtMaKH.setBackground(Color.white);
+        }
+        if (sb.length() > 0) {
+            JOptionPane.showMessageDialog(this, sb);
+            return;
+        }
+        try {
+            KHACH_HANG dao = new KHACH_HANG(driver); 
+            if (checkMaKHExists(txtMaKH.getText())) {
+                JOptionPane.showMessageDialog(this, "Mã khách hàng đã tồn tại. Vui lòng nhập mã khác!");
+            return;
+            }
+            TTKhachHang khachHang = new TTKhachHang();
+            khachHang.setMaKH(txtMaKH.getText());
+            khachHang.setTenKH(txtTenKH.getText());
+            khachHang.setSDT(txtSDT.getText());
+            khachHang.setDiaChi(txtDChi.getText());
+            khachHang.setGioiTinh(gtNam.isSelected() ? gtNam.getText() : gtNu.getText());
+            khachHang.setSoThich(txtSoThich.getText());
+            int soLuongMua = Integer.parseInt(txtSoLuongMua.getText());
+            khachHang.setSoLuongMua(soLuongMua);
+            // Thiết lập trạng thái VIP dựa trên số lượng mua
+            khachHang.setVIP_Status(isVIP(soLuongMua));
+            khachHang.setNgayDangKy(LocalDate.now()); 
+            dao.insert(khachHang);
+            JOptionPane.showMessageDialog(this, "Khách hàng được thêm vào thành công!");
+            KhachHang_Load();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
     }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-       
+       String maKH = txtMaKH.getText(); // Giả sử bạn có một TextField để nhập Mã KH
+
+        if (maKH.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã khách hàng để xóa!");
+            return;
+        }
+
+        try {
+            KHACH_HANG dao = new KHACH_HANG(driver);
+            boolean isDeleted = dao.delete(maKH);
+            if (isDeleted) {
+                JOptionPane.showMessageDialog(this, "Khách hàng đã được xóa thành công!");
+                // Cập nhật lại JTable
+                KhachHang_Load(); 
+            } else {
+                JOptionPane.showMessageDialog(this, "Xóa không thành công!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapNhatActionPerformed
-        
+        String maKH = txtMaKH.getText(); // Giả sử bạn có một TextField để nhập Mã KH
+
+    if (maKH.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã khách hàng để sửa!");
+        return;
+    }
+
+    try {
+        TTKhachHang khachHang = new TTKhachHang();
+        khachHang.setMaKH(maKH);
+        khachHang.setTenKH(txtTenKH.getText());
+        khachHang.setSDT(txtSDT.getText());
+        khachHang.setDiaChi(txtDChi.getText());
+        khachHang.setGioiTinh(gtNam.isSelected() ? gtNam.getText() : gtNu.getText());
+        khachHang.setSoThich(txtSoThich.getText());
+        int soLuongMua = Integer.parseInt(txtSoLuongMua.getText());
+        khachHang.setSoLuongMua(soLuongMua);
+        // Thiết lập trạng thái VIP dựa trên số lượng mua
+        khachHang.setVIP_Status(isVIP(soLuongMua));
+        khachHang.setNgayDangKy(LocalDate.now());
+
+        KHACH_HANG dao = new KHACH_HANG(driver); 
+        boolean isUpdated = dao.update(khachHang);
+        if (isUpdated) {
+            JOptionPane.showMessageDialog(this, "Khách hàng đã được cập nhật thành công!");
+            // Cập nhật lại JTable
+            KhachHang_Load(); 
+        } else {
+            JOptionPane.showMessageDialog(this, "Cập nhật không thành công!");
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
     }//GEN-LAST:event_btnCapNhatActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        
+        LamMoi();
     }//GEN-LAST:event_btnResetActionPerformed
 
     /**
@@ -656,6 +822,8 @@ public class frmKhachHang extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JRadioButton jRKhachBTH;
+    private javax.swing.JRadioButton jRKhachVIP;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel jpnKhachHang;
     private javax.swing.JTable listKH;
@@ -664,8 +832,8 @@ public class frmKhachHang extends javax.swing.JFrame {
     private PanelBoder.PanelBoderFrm panelBoderFrm1;
     private PanelBoder.PanelBoderFrm panelBoderFrm2;
     private javax.swing.JTextField txtDChi;
-    private javax.swing.JTextField txtKhachVIP;
     private javax.swing.JTextField txtMaKH;
+    private javax.swing.JTextField txtNgayDangKy;
     private javax.swing.JTextField txtSDT;
     private javax.swing.JTextField txtSoLuongMua;
     private javax.swing.JTextField txtSoThich;
