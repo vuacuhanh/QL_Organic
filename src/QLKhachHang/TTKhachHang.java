@@ -4,6 +4,7 @@
  */
 package QLKhachHang;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -14,12 +15,12 @@ public class TTKhachHang {
    protected String MaKH, TenKH, GioiTinh, SDT, DiaChi, SoThich;
    protected int SoLuongMua;
    protected boolean  VIP_Status;
-   protected Date NgayDangKy;
+   protected LocalDate NgayDangKy;
 
     public TTKhachHang() {
     }
 
-    public TTKhachHang(String MaKH, String TenKH, String GioiTinh, String SDT, String DiaChi, String SoThich, int SoLuongMua, boolean VIP_Status, Date NgayDangKy) {
+    public TTKhachHang(String MaKH, String TenKH, String GioiTinh, String SDT, String DiaChi, String SoThich, int SoLuongMua, boolean VIP_Status, LocalDate NgayDangKy) {
         this.MaKH = MaKH;
         this.TenKH = TenKH;
         this.GioiTinh = GioiTinh;
@@ -95,11 +96,11 @@ public class TTKhachHang {
         this.VIP_Status = VIP_Status;
     }
 
-    public Date getNgayDangKy() {
+    public LocalDate getNgayDangKy() {
         return NgayDangKy;
     }
 
-    public void setNgayDangKy(Date NgayDangKy) {
+    public void setNgayDangKy(LocalDate NgayDangKy) {
         this.NgayDangKy = NgayDangKy;
     }
    
