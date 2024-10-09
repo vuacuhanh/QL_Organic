@@ -21,7 +21,7 @@ public class ConnectDB {
     public ConnectDB() {
         String uri = "bolt://localhost:7687";
         String user = "neo4j";
-        String password = "12345678"; 
+        String password = "123456789"; 
         driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
         if (checkConnection()) {
             System.out.println("Kết nối Neo4j thành công!");
