@@ -7,6 +7,7 @@ package QLSanPham;
 import ConnectingNeo4j.ConnectDB;
 import java.util.ArrayList;
 import java.util.List;
+import static org.neo4j.driver.GraphDatabase.driver;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
@@ -129,7 +130,8 @@ public List<TTSanPham> timKiemSanPham(String tuKhoa) {
     }
     return danhSachSanPham;
 }
-
+  
+    
     
     // Hàm để đóng kết nối sau khi lấy dữ liệu
     public void closeConnection() {

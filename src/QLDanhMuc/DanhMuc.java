@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
+import org.neo4j.driver.Values;
 /**
  *
  * @author AVITA
@@ -107,6 +108,43 @@ public class DanhMuc {
         }
         return danhSachDanhMuc;
     }
+    
+     public String timMaDMTheoTen(String tenDM) {
+        String maDM = null;  // Khởi tạo biến mã danh mục
+
+        try (Session session = connectDB.getDriver().session()) {
+            // Truy vấn để lấy mã danh mục theo tên danh mục
+            String query = "MATCH (d:Category {TenDM: $tenDM}) RETURN d.MaDM AS maDM";
+            Result result = session.run(query, Values.parameters("tenDM", tenDM));
+
+            if (result.hasNext()) {
+                org.neo4j.driver.Record record = result.next();
+                maDM = record.get("maDM").asString();  // Lấy mã danh mục
+            }
+        }
+        return maDM;  // Trả về mã danh mục hoặc null nếu không tìm thấy
+    }
+    public List<String> getSanPhamByCategory(String maDM) {
+    List<String> danhSachSanPham = new ArrayList<>();
+    try (Session session = connectDB.getDriver().session()) {
+        // Truy vấn để lấy danh sách sản phẩm theo mã danh mục
+        String query = "MATCH (p:Product)-[:THUOC_DANH_MUC]->(d:Category {MaDM: $maDM}) " +
+                       "RETURN p.TenSP AS tenSP";
+        Result result = session.run(query, org.neo4j.driver.Values.parameters("maDM", maDM));
+
+        while (result.hasNext()) {
+            org.neo4j.driver.Record record = result.next();
+            danhSachSanPham.add(record.get("tenSP").asString()); // Lưu tên sản phẩm vào danh sách
+        }
+    } catch (Exception e) {
+        e.printStackTrace(); // Xử lý lỗi nếu cần
+    }
+    return danhSachSanPham; // Trả về danh sách tên sản phẩm
+}
+
+
+
+     
 
     // Hàm để đóng kết nối sau khi lấy dữ liệu
     public void closeConnection() {

@@ -16,6 +16,9 @@ public class TTSanPham {
     private String donViTinh;     // Đơn vị tính của sản phẩm
     private String xuatXu;        // Xuất xứ của sản phẩm
     private int soLuongTonKho;    // Số lượng tồn kho của sản phẩm
+
+
+     
     
     // Constructor không tham số
     public TTSanPham() {}

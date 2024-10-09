@@ -4,6 +4,8 @@
  */
 package ConnectingNeo4j;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -39,6 +41,9 @@ public class ConnectDB {
             return false;  
         }
     }
+    
+   
+
     public Driver getDriver() {
         return driver;
     }
