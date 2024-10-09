@@ -7,8 +7,10 @@ package QLSanPham;
 import ConnectingNeo4j.ConnectDB;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
+import static org.neo4j.driver.Values.parameters;
 
 /**
  *
@@ -129,6 +131,66 @@ public List<TTSanPham> timKiemSanPham(String tuKhoa) {
     }
     return danhSachSanPham;
 }
+
+    // Hàm lấy danh sách tên sản phẩm từ Neo4j
+public List<String> getDanhSachTenSanPham() {
+    List<String> danhSachTenSanPham = new ArrayList<>();
+    try (Session session = connectDB.getDriver().session()) {
+        String query = "MATCH (p:Product) RETURN p.TenSP AS tenSP";
+        Result result = session.run(query);
+
+        while (result.hasNext()) {
+            org.neo4j.driver.Record record = result.next();
+            danhSachTenSanPham.add(record.get("tenSP").asString());
+        }
+    }
+    return danhSachTenSanPham;
+}
+
+public boolean themSanPhamVaoDanhMuc(String maSP, String maDM) {
+    try (Session session = connectDB.getDriver().session()) {
+        // Kiểm tra xem mối quan hệ đã tồn tại chưa
+        String checkQuery = "MATCH (p:Product {MaSP: $maSP})-[r:THUOC_DANH_MUC]->(d:Category {MaDM: $maDM}) RETURN r";
+        Result result = session.run(checkQuery, parameters("maSP", maSP, "maDM", maDM));
+
+        if (result.hasNext()) {
+            // Nếu mối quan hệ đã tồn tại
+            System.out.println("Sản phẩm " + maSP + " đã nằm trong danh mục " + maDM + ".");
+            JOptionPane.showMessageDialog(null, "Sản phẩm đã có trong danh mục này!");
+            return false; // Không thêm mới
+        }
+
+        // Nếu mối quan hệ chưa tồn tại, thêm mới
+        String query = "MATCH (p:Product {MaSP: $maSP}), (d:Category {MaDM: $maDM}) " +
+                       "CREATE (p)-[:THUOC_DANH_MUC]->(d)";
+        session.run(query, parameters("maSP", maSP, "maDM", maDM));
+
+        System.out.println("Thêm sản phẩm " + maSP + " vào danh mục " + maDM + " thành công.");
+        JOptionPane.showMessageDialog(null, "Thêm sản phẩm vào danh mục thành công!");
+        return true; // Thêm mới thành công
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Có lỗi xảy ra khi thêm sản phẩm vào danh mục.");
+        return false; // Có lỗi xảy ra
+    }
+}
+
+
+
+  // Hàm lấy mã sản phẩm theo tên
+    public String layMaSPTheoTen(String tenSP) {
+        String maSP = null;
+        try (Session session = connectDB.getDriver().session()) {
+            String query = "MATCH (p:Product {TenSP: $tenSP}) RETURN p.MaSP AS maSP";
+            Result result = session.run(query, parameters("tenSP", tenSP));
+            if (result.hasNext()) {
+                maSP = result.next().get("maSP").asString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return maSP;
+    }
 
     
     // Hàm để đóng kết nối sau khi lấy dữ liệu
