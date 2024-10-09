@@ -75,7 +75,7 @@ public class FTrangChu extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(117, 117, 117)
+                .addGap(144, 144, 144)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -84,14 +84,14 @@ public class FTrangChu extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(42, 42, 42)
+                .addGap(50, 50, 50)
                 .addComponent(jLabel1)
-                .addGap(26, 26, 26)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addContainerGap(53, Short.MAX_VALUE))
         );
 
-        jPanel5.setBackground(new java.awt.Color(255, 204, 51));
+        jPanel5.setBackground(new java.awt.Color(156, 219, 166));
         jPanel5.setPreferredSize(new java.awt.Dimension(427, 40));
         jPanel5.setRequestFocusEnabled(false);
 
@@ -127,7 +127,7 @@ public class FTrangChu extends javax.swing.JFrame {
                     .addContainerGap(16, Short.MAX_VALUE)))
         );
 
-        jPanel6.setBackground(new java.awt.Color(102, 255, 102));
+        jPanel6.setBackground(new java.awt.Color(156, 219, 166));
         jPanel6.setPreferredSize(new java.awt.Dimension(0, 40));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delivery.png"))); // NOI18N
@@ -156,7 +156,7 @@ public class FTrangChu extends javax.swing.JFrame {
                 .addContainerGap(10, Short.MAX_VALUE))
         );
 
-        jPanel7.setBackground(new java.awt.Color(153, 255, 204));
+        jPanel7.setBackground(new java.awt.Color(156, 219, 166));
         jPanel7.setForeground(new java.awt.Color(51, 255, 204));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/building.png"))); // NOI18N
@@ -185,7 +185,7 @@ public class FTrangChu extends javax.swing.JFrame {
                 .addContainerGap(10, Short.MAX_VALUE))
         );
 
-        jPanel8.setBackground(new java.awt.Color(0, 153, 255));
+        jPanel8.setBackground(new java.awt.Color(156, 219, 166));
         jPanel8.setPreferredSize(new java.awt.Dimension(250, 40));
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/shopping-bag.png"))); // NOI18N
@@ -214,7 +214,7 @@ public class FTrangChu extends javax.swing.JFrame {
                 .addContainerGap(10, Short.MAX_VALUE))
         );
 
-        jPanel9.setBackground(new java.awt.Color(255, 51, 51));
+        jPanel9.setBackground(new java.awt.Color(156, 219, 166));
 
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/fast-delivery.png"))); // NOI18N
 
@@ -242,7 +242,7 @@ public class FTrangChu extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jPanel10.setBackground(new java.awt.Color(102, 102, 0));
+        jPanel10.setBackground(new java.awt.Color(156, 219, 166));
 
         jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/user (2).png"))); // NOI18N
 
