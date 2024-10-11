@@ -4,7 +4,11 @@
  */
 package MainPage;
 
+import QLDanhMUc.QLDanhMuc;
+import QLDiaDiem.frmDiaDiem;
+import QLHoaDon.QLHoaDon;
 import QLKhachHang.frmKhachHangJP;
+import QLSanPham.QLSanPhamJP;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -56,24 +60,24 @@ public class ChuyenManHinhController {
         @Override
         public void mouseClicked(MouseEvent e) {
             switch (kind) {
-                case "QLKhachHang":
+                case "TrangChu":
+                    node = new FrmHome();
+                    break;
+                case "KhacHang":
                     node = new frmKhachHangJP();
                     break;
-//                case "BanSach":
-//                    node = new frmBanSach();
-//                    break;
-//                case "QLHoaDon":
-//                    node = new frmQLHD();
-//                    break;
-//                case "QLTaiKhoan":
-//                    node = new Frm1();
-//                    break;
-//                case "ThongKe":
-//                    node = new frmThongKe();
-//                    break;
-//                case "QLKhachHang":
-//                    node = new frmQLKhachHang();
-//                    break;
+                case "SanPham":
+                    node = new QLSanPhamJP();
+                    break;
+                case "DanhMuc":
+                    node = new QLDanhMuc();
+                    break;
+                case "HoaDon":
+                    node = new QLHoaDon();
+                    break;
+                case "DiaDiem":
+                    node = new frmDiaDiem();
+                    break;
                 default:
                     break;
             }

@@ -135,6 +135,7 @@ public class frmKhachHang extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setType(java.awt.Window.Type.UTILITY);
 
         jpnKhachHang.setBackground(new java.awt.Color(0, 51, 102));
 

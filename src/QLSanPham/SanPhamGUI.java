@@ -51,7 +51,7 @@ public class SanPhamGUI extends javax.swing.JFrame {
     public void actionPerformed(java.awt.event.ActionEvent evt) {
         btnTimKiemActionPerformed(evt);
     }
-});
+    });
 
     }
     
