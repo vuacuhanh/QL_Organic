@@ -24,7 +24,7 @@ import javax.swing.table.TableRowSorter;
  */
 public class ChiTietHoaDonGui extends javax.swing.JFrame {
 
-      private ChiTietHoaDon chiTietHoaDon; // Đối tượng để lấy danh sách chi tiết hóa đơn
+    private ChiTietHoaDon chiTietHoaDon; // Đối tượng để lấy danh sách chi tiết hóa đơn
     private DefaultTableModel tableModel; // Model cho JTable
 
     /**

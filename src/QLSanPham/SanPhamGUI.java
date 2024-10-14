@@ -54,7 +54,7 @@ public class SanPhamGUI extends javax.swing.JFrame {
     public void actionPerformed(java.awt.event.ActionEvent evt) {
         btnTimKiemActionPerformed(evt);
     }
-});
+    });
 
     }
     
@@ -376,7 +376,7 @@ private void loadSanPham() {
         });
 
         btnReset.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnReset.setText("Reset");
+        btnReset.setText("Refresh");
         btnReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnResetActionPerformed(evt);
@@ -817,6 +817,8 @@ private void loadSanPham() {
     txtDVT.setText("");          // Reset đơn vị tính
     txtXuatXu.setText("");       // Reset xuất xứ
     txtSoLuongTonKho.setText(""); // Reset số lượng tồn kho
+    
+    loadProducts();
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void btnTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimKiemActionPerformed

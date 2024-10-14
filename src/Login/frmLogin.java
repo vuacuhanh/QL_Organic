@@ -5,7 +5,7 @@
 package Login;
 
 import ConnectingNeo4j.ConnectDB;
-import MainPage.FTrangChu;
+import MainPage.frmTrangChu;
 import javax.swing.JOptionPane;
 
 
@@ -257,7 +257,7 @@ public class frmLogin extends javax.swing.JFrame {
             // Kiểm tra tài khoản
             if (tk != null) {
             // Nếu đăng nhập thành công, mở trang chủ
-                new FTrangChu(tk).setVisible(true);
+                new frmTrangChu(tk).setVisible(true);
                 this.dispose(); // Đóng form đăng nhập
             } else {
                 // Thông báo nếu thông tin không đúng

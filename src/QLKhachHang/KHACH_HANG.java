@@ -22,23 +22,24 @@ public class KHACH_HANG {
     }
     
     public boolean insert(TTKhachHang khachHang) {
-        String query = "CREATE (k:KhachHang {MaKH: $maKH, TenKH: $tenKH, GioiTinh: $gioiTinh, " +
+        String query = "CREATE (c:Customer {MaKH: $maKH, TenKH: $tenKH, GioiTinh: $gioiTinh, " +
                        "SDT: $sdt, DiaChi: $diaChi, SoThich: $soThich, SoLuongMua: $soLuongMua, " +
                        "VIP_Status: $vipStatus, NgayDangKy: $ngayDangKy})";
 
         try (Session session = driver.session()) {
             session.writeTransaction(tx -> {
-                tx.run(query, org.neo4j.driver.Values.parameters(
-                        "maKH", khachHang.getMaKH(),
-                        "tenKH", khachHang.getTenKH(),
-                        "gioiTinh", khachHang.getGioiTinh(),
-                        "sdt", khachHang.getSDT(),
-                        "diaChi", khachHang.getDiaChi(),
-                        "soThich", khachHang.getSoThich(),
-                        "soLuongMua", khachHang.getSoLuongMua(),
-                        "vipStatus", khachHang.isVIP_Status(),
-                        "ngayDangKy", khachHang.getNgayDangKy()
+                var result = tx.run(query, org.neo4j.driver.Values.parameters(
+                    "maKH", khachHang.getMaKH(),
+                    "tenKH", khachHang.getTenKH(),
+                    "gioiTinh", khachHang.getGioiTinh(),
+                    "sdt", khachHang.getSDT(),
+                    "diaChi", khachHang.getDiaChi(),
+                    "soThich", khachHang.getSoThich(),
+                    "soLuongMua", khachHang.getSoLuongMua(),
+                    "vipStatus", khachHang.isVIP_Status(),
+                    "ngayDangKy", khachHang.getNgayDangKy()
                 ));
+                result.consume(); // Tiêu thụ kết quả để tránh lỗi
                 return null;
             });
             return true;
@@ -49,7 +50,7 @@ public class KHACH_HANG {
     }
 
     public TTKhachHang find(String maKH) {
-        String query = "MATCH (k:KhachHang {MaKH: $maKH}) RETURN k";
+        String query = "MATCH (c:Customer {MaKH: $maKH}) RETURN c";
 
         try (Session session = driver.session()) {
             return session.readTransaction(new TransactionWork<TTKhachHang>() {
@@ -81,11 +82,11 @@ public class KHACH_HANG {
     }
 
     public boolean update(TTKhachHang khachHang) {
-        String query = "MATCH (k:KhachHang {MaKH: $maKH}) " +
-                       "SET k.TenKH = $tenKH, k.GioiTinh = $gioiTinh, k.SDT = $sdt, " +
-                       "k.DiaChi = $diaChi, k.SoThich = $soThich, " +
-                       "k.SoLuongMua = $soLuongMua, k.VIP_Status = $vipStatus, " +
-                       "k.NgayDangKy = $ngayDangKy";
+        String query = "MATCH (c:Customer {MaKH: $maKH}) " +
+                       "SET c.TenKH = $tenKH, c.GioiTinh = $gioiTinh, c.SDT = $sdt, " +
+                       "c.DiaChi = $diaChi, c.SoThich = $soThich, " +
+                       "c.SoLuongMua = $soLuongMua, c.VIP_Status = $vipStatus, " +
+                       "c.NgayDangKy = $ngayDangKy";
 
         try (Session session = driver.session()) {
             session.writeTransaction(tx -> {
@@ -110,7 +111,7 @@ public class KHACH_HANG {
     }
 
     public boolean delete(String maKH) {
-        String query = "MATCH (k:KhachHang {MaKH: $maKH}) DELETE k";
+        String query = "MATCH (c:Customer {MaKH: $maKH}) DELETE c";
 
         try (Session session = driver.session()) {
             session.writeTransaction(tx -> {
