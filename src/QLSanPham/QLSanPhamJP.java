@@ -134,6 +134,12 @@ public class QLSanPhamJP extends javax.swing.JPanel {
         btnTimKiem = new javax.swing.JButton();
         txtTimKiem = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        panelBoderFrm4 = new PanelBoder.PanelBoderFrm();
+        btnThemDM = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel10 = new javax.swing.JLabel();
+        jComboBox2 = new javax.swing.JComboBox<>();
         jPanel5 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
 
@@ -394,6 +400,55 @@ public class QLSanPhamJP extends javax.swing.JPanel {
                 .addGap(24, 24, 24))
         );
 
+        panelBoderFrm4.setBackground(new java.awt.Color(0, 51, 102));
+
+        btnThemDM.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        btnThemDM.setText("Thêm");
+        btnThemDM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemDMActionPerformed(evt);
+            }
+        });
+
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setText("Chọn danh mục :");
+
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("Chọn sản phẩm :");
+
+        javax.swing.GroupLayout panelBoderFrm4Layout = new javax.swing.GroupLayout(panelBoderFrm4);
+        panelBoderFrm4.setLayout(panelBoderFrm4Layout);
+        panelBoderFrm4Layout.setHorizontalGroup(
+            panelBoderFrm4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBoderFrm4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnThemDM)
+                .addGap(15, 15, 15))
+        );
+        panelBoderFrm4Layout.setVerticalGroup(
+            panelBoderFrm4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBoderFrm4Layout.createSequentialGroup()
+                .addContainerGap(17, Short.MAX_VALUE)
+                .addGroup(panelBoderFrm4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(panelBoderFrm4Layout.createSequentialGroup()
+                        .addComponent(btnThemDM, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)
+                        .addGap(2, 2, 2))
+                    .addGroup(panelBoderFrm4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel9)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel10)
+                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(26, 26, 26))
+        );
+
         javax.swing.GroupLayout panelBoderFrm1Layout = new javax.swing.GroupLayout(panelBoderFrm1);
         panelBoderFrm1.setLayout(panelBoderFrm1Layout);
         panelBoderFrm1Layout.setHorizontalGroup(
@@ -433,7 +488,8 @@ public class QLSanPhamJP extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtGia, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(panelBoderFrm3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(panelBoderFrm3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelBoderFrm4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelBoderFrm1Layout.setVerticalGroup(
@@ -469,9 +525,11 @@ public class QLSanPhamJP extends javax.swing.JPanel {
                     .addComponent(txtSoLuongTonKho, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(31, 31, 31)
                 .addComponent(panelBoderFrm2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panelBoderFrm3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(71, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(panelBoderFrm4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
@@ -740,14 +798,47 @@ public class QLSanPhamJP extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnTimKiemActionPerformed
 
+    private void btnThemDMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemDMActionPerformed
+        // Lấy mã sản phẩm từ ComboBox2 (phân tách mã và tên)
+        String selectedSP = jComboBox2.getSelectedItem().toString();
+        String maSP = selectedSP.split(" - ")[0];  // Tách mã sản phẩm từ chuỗi (VD: "SP001 - Tên sản phẩm")
+
+        // Lấy mã danh mục từ ComboBox1 (phân tách mã và tên)
+        String selectedDM = jComboBox1.getSelectedItem().toString();
+        String maDM = selectedDM.split(" - ")[0];  // Tách mã danh mục từ chuỗi (VD: "DM001 - Tên danh mục")
+
+        // Kiểm tra log xem các giá trị có chính xác không
+        System.out.println("Mã sản phẩm: " + maSP);
+        System.out.println("Mã danh mục: " + maDM);
+
+        // Gọi hàm thêm sản phẩm vào danh mục
+        SanPham sanPham = new SanPham();
+        boolean success = sanPham.themSanPhamVaoDanhMuc(maSP, maDM);
+
+        // Kiểm tra kết quả của việc thêm
+        if (success) {
+            System.out.println("Thêm thành công sản phẩm vào danh mục!");
+            JOptionPane.showMessageDialog(this, "Thêm sản phẩm vào danh mục thành công!");
+        } else {
+            System.out.println("Có lỗi xảy ra khi thêm sản phẩm vào danh mục.");
+            JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi thêm sản phẩm vào danh mục.");
+        }
+
+        sanPham.closeConnection();  // Đóng kết nối Neo4j sau khi hoàn thành
+    }//GEN-LAST:event_btnThemDMActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCapNhat;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnReset;
+    private javax.swing.JButton btnThemDM;
     private javax.swing.JButton btnThemSanPham;
     private javax.swing.JButton btnTimKiem;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -758,6 +849,7 @@ public class QLSanPhamJP extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -769,6 +861,7 @@ public class QLSanPhamJP extends javax.swing.JPanel {
     private PanelBoder.PanelBoderFrm panelBoderFrm1;
     private PanelBoder.PanelBoderFrm panelBoderFrm2;
     private PanelBoder.PanelBoderFrm panelBoderFrm3;
+    private PanelBoder.PanelBoderFrm panelBoderFrm4;
     private javax.swing.JTable tblSanPham;
     private javax.swing.JTextField txtDVT;
     private javax.swing.JTextField txtGia;
