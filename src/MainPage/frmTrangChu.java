@@ -8,6 +8,7 @@ import Login.TaiKhoan;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -19,6 +20,7 @@ public class frmTrangChu extends javax.swing.JFrame {
     public frmTrangChu(TaiKhoan tk) {
         this.taiKhoan = tk; // Gán thông tin tài khoản
         initComponents(); // Khởi tạo các thành phần
+        //JLHello.setText("Chào " + tk.getTen());
         // Có thể sử dụng thông tin từ tk để hiển thị trong form
     }
     public frmTrangChu() {
@@ -64,10 +66,12 @@ public class frmTrangChu extends javax.swing.JFrame {
         JLHoaDon = new javax.swing.JLabel();
         jpQLDiaDiem = new javax.swing.JPanel();
         JLDiaDiem = new javax.swing.JLabel();
-        panelBoderFrm4 = new PanelBoder.PanelBoderFrm();
+        JPExit = new PanelBoder.PanelBoderFrm();
         JLExit = new javax.swing.JLabel();
         jpTrangChu = new javax.swing.JPanel();
         jlTrangChu = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        JLHello = new javax.swing.JLabel();
         PanelView = new PanelBoder.PanelBoderFrm();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -243,9 +247,9 @@ public class frmTrangChu extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        panelBoderFrm4.addMouseListener(new java.awt.event.MouseAdapter() {
+        JPExit.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                panelBoderFrm4MouseClicked(evt);
+                JPExitMouseClicked(evt);
             }
         });
 
@@ -253,18 +257,18 @@ public class frmTrangChu extends javax.swing.JFrame {
         JLExit.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         JLExit.setText("ĐĂNG XUẤT");
 
-        javax.swing.GroupLayout panelBoderFrm4Layout = new javax.swing.GroupLayout(panelBoderFrm4);
-        panelBoderFrm4.setLayout(panelBoderFrm4Layout);
-        panelBoderFrm4Layout.setHorizontalGroup(
-            panelBoderFrm4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBoderFrm4Layout.createSequentialGroup()
+        javax.swing.GroupLayout JPExitLayout = new javax.swing.GroupLayout(JPExit);
+        JPExit.setLayout(JPExitLayout);
+        JPExitLayout.setHorizontalGroup(
+            JPExitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(JPExitLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(JLExit, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        panelBoderFrm4Layout.setVerticalGroup(
-            panelBoderFrm4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBoderFrm4Layout.createSequentialGroup()
+        JPExitLayout.setVerticalGroup(
+            JPExitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JPExitLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(JLExit, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
                 .addContainerGap())
@@ -291,6 +295,9 @@ public class frmTrangChu extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout panelBoderFrm1Layout = new javax.swing.GroupLayout(panelBoderFrm1);
         panelBoderFrm1.setLayout(panelBoderFrm1Layout);
         panelBoderFrm1Layout.setHorizontalGroup(
@@ -303,14 +310,24 @@ public class frmTrangChu extends javax.swing.JFrame {
             .addComponent(jpQLDiaDiem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jpTrangChu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addComponent(panelBoderFrm4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelBoderFrm1Layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(JPExit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelBoderFrm1Layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(37, Short.MAX_VALUE))
+            .addComponent(JLHello, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelBoderFrm1Layout.setVerticalGroup(
             panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                .addContainerGap(269, Short.MAX_VALUE)
+                .addGap(17, 17, 17)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(JLHello, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jpTrangChu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jpQLKH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -325,7 +342,7 @@ public class frmTrangChu extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jpQLDiaDiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(74, 74, 74)
-                .addComponent(panelBoderFrm4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(JPExit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18))
         );
 
@@ -400,9 +417,15 @@ public class frmTrangChu extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jpQLDiaDiemMouseClicked
 
-    private void panelBoderFrm4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelBoderFrm4MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_panelBoderFrm4MouseClicked
+    private void JPExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JPExitMouseClicked
+        // Hiện thông báo xác nhận trước khi thoát
+    int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", JOptionPane.YES_NO_OPTION);
+    
+    // Nếu người dùng chọn "Có", thoát ứng dụng
+    if (confirm == JOptionPane.YES_OPTION) {
+        System.exit(0); // Đóng ứng dụng
+    }
+    }//GEN-LAST:event_JPExitMouseClicked
     
     /**
      * @param args the command line arguments
@@ -445,10 +468,13 @@ public class frmTrangChu extends javax.swing.JFrame {
     private javax.swing.JLabel JLDanhMuc;
     private javax.swing.JLabel JLDiaDiem;
     private javax.swing.JLabel JLExit;
+    private javax.swing.JLabel JLHello;
     private javax.swing.JLabel JLHoaDon;
     private javax.swing.JLabel JLKhachHang;
     private javax.swing.JLabel JLSanPham;
+    private PanelBoder.PanelBoderFrm JPExit;
     private PanelBoder.PanelBoderFrm PanelView;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel jlTrangChu;
     private javax.swing.JPanel jpQLCuaHang;
@@ -459,6 +485,5 @@ public class frmTrangChu extends javax.swing.JFrame {
     private javax.swing.JPanel jpQLSanPham;
     private javax.swing.JPanel jpTrangChu;
     private PanelBoder.PanelBoderFrm panelBoderFrm1;
-    private PanelBoder.PanelBoderFrm panelBoderFrm4;
     // End of variables declaration//GEN-END:variables
 }
