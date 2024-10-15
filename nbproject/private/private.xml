@@ -24,6 +24,7 @@
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/qloganic/QLOganic.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLKhachHang/TTKhachHang.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLHoaDon/HoaDon.java</file>
+            <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLThongKe/ThongKe.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLHoaDon/QLHoaDon.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLHoaDon/ChiTietHoaDonGui.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLHoaDon/HoaDonGui.java</file>
@@ -31,13 +32,16 @@
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLHoaDon/ChiTietHoaDon.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLSanPham/QLSanPhamJP.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/PanelBoder/PanelBoderFrm.java</file>
+            <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLThongKe/QLThongKe.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/MainPage/FrmHome.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLHoaDon/QLChiTietHoaDon.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QL_CuaHang/CuaHang.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/MainPage/frmTrangChu.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLDanhMUc/QLDanhMuc.java</file>
+            <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLThongKe/QLThongKe1.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLSanPham/TTSanPham.java</file>
             <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLDiaDiem/frmDiaDiem.java</file>
+            <file>file:/E:/DoAnNoSQL/QLOrganic/QLOganic/src/QLDanhMUc/DanhMuc.java</file>
         </group>
     </open-files>
 </project-private>
