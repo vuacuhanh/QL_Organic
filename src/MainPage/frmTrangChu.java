@@ -450,7 +450,6 @@ public class frmTrangChu extends javax.swing.JFrame {
     private javax.swing.JLabel JLSanPham;
     private PanelBoder.PanelBoderFrm PanelView;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel jlTrangChu;
     private javax.swing.JPanel jpQLCuaHang;
     private javax.swing.JPanel jpQLDanhMuc;
