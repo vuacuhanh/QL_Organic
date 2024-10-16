@@ -4,10 +4,12 @@
  */
 package MainPage;
 
+import ConnectingNeo4j.ConnectDB;
 import Login.TaiKhoan;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -16,10 +18,15 @@ import java.util.List;
 public class frmTrangChu extends javax.swing.JFrame {
 
     private TaiKhoan taiKhoan;
+    private ConnectDB connectDB;
+    
     public frmTrangChu(TaiKhoan tk) {
-        this.taiKhoan = tk; // Gán thông tin tài khoản
         initComponents(); // Khởi tạo các thành phần
-        // Có thể sử dụng thông tin từ tk để hiển thị trong form
+        this.taiKhoan = tk; // Gán thông tin tài khoản
+        connectDB = new ConnectDB();
+        this.repaint(); 
+        this.revalidate();
+        //JLHello.setText("Chào " + tk.getTen());
     }
     public frmTrangChu() {
         initComponents();
@@ -33,7 +40,7 @@ public class frmTrangChu extends javax.swing.JFrame {
         listItem.add(new DanhMucBean("DanhMuc",jpQLDanhMuc,JLDanhMuc));
         listItem.add(new DanhMucBean("CuaHang",jpQLCuaHang,JLCuaHang));
         listItem.add(new DanhMucBean("HoaDon",jpQLHoaDon,JLHoaDon));
-        listItem.add(new DanhMucBean("DiaDiem",jpQLDiaDiem,JLDiaDiem));
+        listItem.add(new DanhMucBean("ThongKe",jpQLDiaDiem,JLDiaDiem));
         controller.setEvent(listItem);
     }
     private void init(){
@@ -64,13 +71,16 @@ public class frmTrangChu extends javax.swing.JFrame {
         JLHoaDon = new javax.swing.JLabel();
         jpQLDiaDiem = new javax.swing.JPanel();
         JLDiaDiem = new javax.swing.JLabel();
-        panelBoderFrm4 = new PanelBoder.PanelBoderFrm();
+        JPExit = new PanelBoder.PanelBoderFrm();
         JLExit = new javax.swing.JLabel();
         jpTrangChu = new javax.swing.JPanel();
         jlTrangChu = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        JLHello = new javax.swing.JLabel();
         PanelView = new PanelBoder.PanelBoderFrm();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setAlwaysOnTop(true);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(1700, 1200));
@@ -90,6 +100,7 @@ public class frmTrangChu extends javax.swing.JFrame {
         JLKhachHang.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         JLKhachHang.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         JLKhachHang.setText("QUẢN LÝ KHÁCH HÀNG");
+        JLKhachHang.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jpQLKHLayout = new javax.swing.GroupLayout(jpQLKH);
         jpQLKH.setLayout(jpQLKHLayout);
@@ -117,6 +128,7 @@ public class frmTrangChu extends javax.swing.JFrame {
         JLSanPham.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         JLSanPham.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         JLSanPham.setText("QUAN LÝ SẢN PHẨM");
+        JLSanPham.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jpQLSanPhamLayout = new javax.swing.GroupLayout(jpQLSanPham);
         jpQLSanPham.setLayout(jpQLSanPhamLayout);
@@ -144,6 +156,7 @@ public class frmTrangChu extends javax.swing.JFrame {
         JLDanhMuc.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         JLDanhMuc.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         JLDanhMuc.setText("QUẢN LÝ DANH MỤC");
+        JLDanhMuc.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jpQLDanhMucLayout = new javax.swing.GroupLayout(jpQLDanhMuc);
         jpQLDanhMuc.setLayout(jpQLDanhMucLayout);
@@ -171,6 +184,7 @@ public class frmTrangChu extends javax.swing.JFrame {
         JLCuaHang.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         JLCuaHang.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         JLCuaHang.setText("QUẢN LÝ CỬA HÀNG");
+        JLCuaHang.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jpQLCuaHangLayout = new javax.swing.GroupLayout(jpQLCuaHang);
         jpQLCuaHang.setLayout(jpQLCuaHangLayout);
@@ -198,6 +212,7 @@ public class frmTrangChu extends javax.swing.JFrame {
         JLHoaDon.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         JLHoaDon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         JLHoaDon.setText("QUẢN LÝ HÓA ĐƠN");
+        JLHoaDon.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jpQLHoaDonLayout = new javax.swing.GroupLayout(jpQLHoaDon);
         jpQLHoaDon.setLayout(jpQLHoaDonLayout);
@@ -224,7 +239,8 @@ public class frmTrangChu extends javax.swing.JFrame {
 
         JLDiaDiem.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         JLDiaDiem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        JLDiaDiem.setText("QUẢN LÝ ĐỊA ĐIỂM");
+        JLDiaDiem.setText("QUẢN LÝ THỐNG KÊ");
+        JLDiaDiem.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jpQLDiaDiemLayout = new javax.swing.GroupLayout(jpQLDiaDiem);
         jpQLDiaDiem.setLayout(jpQLDiaDiemLayout);
@@ -243,28 +259,29 @@ public class frmTrangChu extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        panelBoderFrm4.addMouseListener(new java.awt.event.MouseAdapter() {
+        JPExit.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                panelBoderFrm4MouseClicked(evt);
+                JPExitMouseClicked(evt);
             }
         });
 
         JLExit.setFont(new java.awt.Font("Segoe UI Black", 1, 14)); // NOI18N
         JLExit.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         JLExit.setText("ĐĂNG XUẤT");
+        JLExit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        javax.swing.GroupLayout panelBoderFrm4Layout = new javax.swing.GroupLayout(panelBoderFrm4);
-        panelBoderFrm4.setLayout(panelBoderFrm4Layout);
-        panelBoderFrm4Layout.setHorizontalGroup(
-            panelBoderFrm4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBoderFrm4Layout.createSequentialGroup()
+        javax.swing.GroupLayout JPExitLayout = new javax.swing.GroupLayout(JPExit);
+        JPExit.setLayout(JPExitLayout);
+        JPExitLayout.setHorizontalGroup(
+            JPExitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(JPExitLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(JLExit, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        panelBoderFrm4Layout.setVerticalGroup(
-            panelBoderFrm4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBoderFrm4Layout.createSequentialGroup()
+        JPExitLayout.setVerticalGroup(
+            JPExitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JPExitLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(JLExit, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
                 .addContainerGap())
@@ -273,6 +290,7 @@ public class frmTrangChu extends javax.swing.JFrame {
         jlTrangChu.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jlTrangChu.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlTrangChu.setText("TRANG CHỦ");
+        jlTrangChu.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jpTrangChuLayout = new javax.swing.GroupLayout(jpTrangChu);
         jpTrangChu.setLayout(jpTrangChuLayout);
@@ -291,6 +309,9 @@ public class frmTrangChu extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout panelBoderFrm1Layout = new javax.swing.GroupLayout(panelBoderFrm1);
         panelBoderFrm1.setLayout(panelBoderFrm1Layout);
         panelBoderFrm1Layout.setHorizontalGroup(
@@ -303,14 +324,24 @@ public class frmTrangChu extends javax.swing.JFrame {
             .addComponent(jpQLDiaDiem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jpTrangChu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addComponent(panelBoderFrm4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelBoderFrm1Layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(JPExit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelBoderFrm1Layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(37, Short.MAX_VALUE))
+            .addComponent(JLHello, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelBoderFrm1Layout.setVerticalGroup(
             panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                .addContainerGap(269, Short.MAX_VALUE)
+                .addGap(17, 17, 17)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(JLHello, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jpTrangChu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jpQLKH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -325,7 +356,7 @@ public class frmTrangChu extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jpQLDiaDiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(74, 74, 74)
-                .addComponent(panelBoderFrm4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(JPExit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18))
         );
 
@@ -377,32 +408,49 @@ public class frmTrangChu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jpQLKHMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jpQLKHMouseClicked
-        // TODO add your handling code here:
+        ChuyenManHinhController controller = new ChuyenManHinhController(PanelView);
+        controller.setView(jpQLKH, JLKhachHang);    
     }//GEN-LAST:event_jpQLKHMouseClicked
 
     private void jpQLSanPhamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jpQLSanPhamMouseClicked
         // TODO add your handling code here:
+        ChuyenManHinhController controller = new ChuyenManHinhController(PanelView);
+        controller.setView(jpQLSanPham,JLSanPham);  
     }//GEN-LAST:event_jpQLSanPhamMouseClicked
 
     private void jpQLDanhMucMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jpQLDanhMucMouseClicked
         // TODO add your handling code here:
+        ChuyenManHinhController controller = new ChuyenManHinhController(PanelView);
+        controller.setView(jpQLDanhMuc,JLDanhMuc);  
     }//GEN-LAST:event_jpQLDanhMucMouseClicked
 
     private void jpQLCuaHangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jpQLCuaHangMouseClicked
         // TODO add your handling code here:
+        ChuyenManHinhController controller = new ChuyenManHinhController(PanelView);
+        controller.setView(jpQLCuaHang,JLCuaHang);  
     }//GEN-LAST:event_jpQLCuaHangMouseClicked
 
     private void jpQLHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jpQLHoaDonMouseClicked
         // TODO add your handling code here:
+        ChuyenManHinhController controller = new ChuyenManHinhController(PanelView);
+        controller.setView(jpQLHoaDon,JLHoaDon);  
     }//GEN-LAST:event_jpQLHoaDonMouseClicked
 
     private void jpQLDiaDiemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jpQLDiaDiemMouseClicked
         // TODO add your handling code here:
+        ChuyenManHinhController controller = new ChuyenManHinhController(PanelView);
+        controller.setView(jpQLDiaDiem,JLDiaDiem);  
     }//GEN-LAST:event_jpQLDiaDiemMouseClicked
 
-    private void panelBoderFrm4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelBoderFrm4MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_panelBoderFrm4MouseClicked
+    private void JPExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JPExitMouseClicked
+        // Hiện thông báo xác nhận trước khi thoát
+    int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", JOptionPane.YES_NO_OPTION);
+    
+    // Nếu người dùng chọn "Có", thoát ứng dụng
+    if (confirm == JOptionPane.YES_OPTION) {
+        System.exit(0); // Đóng ứng dụng
+    }
+    }//GEN-LAST:event_JPExitMouseClicked
     
     /**
      * @param args the command line arguments
@@ -445,10 +493,13 @@ public class frmTrangChu extends javax.swing.JFrame {
     private javax.swing.JLabel JLDanhMuc;
     private javax.swing.JLabel JLDiaDiem;
     private javax.swing.JLabel JLExit;
+    private javax.swing.JLabel JLHello;
     private javax.swing.JLabel JLHoaDon;
     private javax.swing.JLabel JLKhachHang;
     private javax.swing.JLabel JLSanPham;
+    private PanelBoder.PanelBoderFrm JPExit;
     private PanelBoder.PanelBoderFrm PanelView;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel jlTrangChu;
     private javax.swing.JPanel jpQLCuaHang;
@@ -459,6 +510,5 @@ public class frmTrangChu extends javax.swing.JFrame {
     private javax.swing.JPanel jpQLSanPham;
     private javax.swing.JPanel jpTrangChu;
     private PanelBoder.PanelBoderFrm panelBoderFrm1;
-    private PanelBoder.PanelBoderFrm panelBoderFrm4;
     // End of variables declaration//GEN-END:variables
 }

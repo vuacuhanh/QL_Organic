@@ -4,10 +4,14 @@
  */
 package QLDanhMuc;
 
-import QLDanhMuc.DanhMuc;
-import QLDanhMuc.TTDanhMuc;
+
+import ConnectingNeo4j.ConnectDB;
+import QLSanPham.SanPham;
+import QLSanPham.TTSanPham;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
@@ -17,22 +21,32 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.Values;
 /**
  *
  * @author AVITA
  */
 public class DanhMucGui extends javax.swing.JFrame {
 
-     private DanhMuc danhMuc; // Đối tượng để lấy danh sách sản phẩm
+    private DanhMuc danhMuc; // Đối tượng để lấy danh sách sản phẩm
+     private SanPham sanPham; // Đối tượng để lấy danh sách sản phẩm
     private DefaultTableModel tableModel; // Model cho JTable
+    private DefaultTableModel tableModel1;
+  
     /**
      * Creates new form SanPhamGUI
      */
     public DanhMucGui() {
         initComponents();
+
         danhMuc = new DanhMuc(); // Khởi tạo đối tượng SanPham
         tableModel = (DefaultTableModel) tblDanhMuc.getModel(); // Lấy model từ JTable
+        sanPham = new SanPham(); // Khởi tạo đối tượng SanPham
+        tableModel1 = (DefaultTableModel) tblSanPham.getModel(); // Lấy model từ JTable
         loadDanhMuc(); // Gọi hàm để load sản phẩm vào bảng
+        loadProducts();
         
          // Thêm listener cho tblSanPham
         tblDanhMuc.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -47,6 +61,7 @@ public class DanhMucGui extends javax.swing.JFrame {
                 }
             }
         });
+
         btnTimKiem.addActionListener(new java.awt.event.ActionListener() {
     public void actionPerformed(java.awt.event.ActionEvent evt) {
         btnTimKiemActionPerformed(evt);
@@ -55,7 +70,20 @@ public class DanhMucGui extends javax.swing.JFrame {
 
     }
     
+    
+   
+  
+   
+   
      private void loadDanhMuc() {
+    DanhMuc danhMuc = new DanhMuc();  // Tạo đối tượng DanhMuc để truy cập hàm lấy danh mục
+    List<TTDanhMuc> danhMucList = danhMuc.getDanhSachDanhMuc();  // Lấy danh sách danh mục
+    cbbSanPham.removeAllItems();  // Xóa các item cũ trong combobox
+    // Thay đổi ở đây: thêm mã danh mục vào combobox1
+    for (TTDanhMuc dm : danhMucList) {
+        cbbSanPham.addItem(dm.getMaDM() + " - " + dm.getTenDM());  // Thêm mã và tên danh mục vào combobox1
+    }
+
         // Lấy danh sách sản phẩm
         List<TTDanhMuc> danhSach = danhMuc.getDanhSachDanhMuc();
 
@@ -71,6 +99,26 @@ public class DanhMucGui extends javax.swing.JFrame {
             tableModel.addRow(row); // Thêm hàng vào bảng
         }
     }
+      private void loadProducts() {
+        // Lấy danh sách sản phẩm
+        List<TTSanPham> danhSach = sanPham.getDanhSachSanPham();
+
+        // Xóa tất cả dữ liệu hiện có trong bảng
+        tableModel1.setRowCount(0);
+        
+
+        // Thêm dữ liệu sản phẩm vào bảng
+        for (TTSanPham sp : danhSach) {
+            Object[] row = {
+                sp.getTenSP(),
+            };
+            tableModel1.addRow(row); // Thêm hàng vào bảng
+        }
+    }
+      
+      
+    
+    
       private void updateFieldsFromSelectedRow(int selectedRow) {
         // Lấy giá trị từ bảng
         String maDM = (String) tableModel.getValueAt(selectedRow, 0);
@@ -79,8 +127,9 @@ public class DanhMucGui extends javax.swing.JFrame {
         // Cập nhật các JTextField
         txtMaDM.setText(maDM);
         txtTenDM.setText(tenDM);
-      
+        
     }
+
 
     /**
      * Creates new form DanhMucGui
@@ -121,6 +170,9 @@ public class DanhMucGui extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblSanPham = new javax.swing.JTable();
+        cbbSanPham = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -399,11 +451,11 @@ public class DanhMucGui extends javax.swing.JFrame {
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtTenDM, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(271, 271, 271)
+                .addGap(18, 18, 18)
                 .addComponent(panelBoderFrm2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panelBoderFrm3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(71, Short.MAX_VALUE))
+                .addContainerGap(338, Short.MAX_VALUE))
         );
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
@@ -431,6 +483,26 @@ public class DanhMucGui extends javax.swing.JFrame {
                     .addGap(0, 18, Short.MAX_VALUE)))
         );
 
+        tblSanPham.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Tên sản phẩm"
+            }
+        ));
+        jScrollPane1.setViewportView(tblSanPham);
+
+        cbbSanPham.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbbSanPham.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbSanPhamActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpnKhachHangLayout = new javax.swing.GroupLayout(jpnKhachHang);
         jpnKhachHang.setLayout(jpnKhachHangLayout);
         jpnKhachHangLayout.setHorizontalGroup(
@@ -445,10 +517,17 @@ public class DanhMucGui extends javax.swing.JFrame {
                             .addGroup(jpnKhachHangLayout.createSequentialGroup()
                                 .addGap(6, 6, 6)
                                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE))))
+                            .addGroup(jpnKhachHangLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane1)
+                                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)))
+                            .addGroup(jpnKhachHangLayout.createSequentialGroup()
+                                .addGap(162, 162, 162)
+                                .addComponent(cbbSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
             .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jpnKhachHangLayout.createSequentialGroup()
@@ -467,9 +546,16 @@ public class DanhMucGui extends javax.swing.JFrame {
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelBoderFrm1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3))
-                .addContainerGap())
+                    .addGroup(jpnKhachHangLayout.createSequentialGroup()
+                        .addComponent(panelBoderFrm1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jpnKhachHangLayout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(45, 45, 45)
+                        .addComponent(cbbSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(57, 57, 57))))
             .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jpnKhachHangLayout.createSequentialGroup()
                     .addContainerGap(814, Short.MAX_VALUE)
@@ -651,6 +737,33 @@ public class DanhMucGui extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnTimKiemActionPerformed
 
+    private void cbbSanPhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbSanPhamActionPerformed
+   String selectedItem = (String) cbbSanPham.getSelectedItem(); 
+
+    if (selectedItem != null) {
+        String maDM = selectedItem.split(" - ")[0]; // Giả sử item có định dạng "maDM - tenDM"
+
+        // Lấy danh sách sản phẩm theo mã danh mục
+        List<String> products = danhMuc.getSanPhamByCategory(maDM); 
+
+        // Cập nhật bảng sản phẩm
+        tableModel1.setRowCount(0); // Xóa dữ liệu cũ trong bảng sản phẩm
+        
+        // Sử dụng Set để tránh thêm sản phẩm trùng lặp
+        Set<String> addedProducts = new HashSet<>();
+        
+        for (String product : products) {
+            // Chỉ thêm sản phẩm nếu nó chưa có trong bảng
+            if (addedProducts.add(product)) {
+                tableModel1.addRow(new Object[]{product}); // Thêm sản phẩm vào bảng
+            }
+        }
+    } else {
+       
+    }
+ 
+    }//GEN-LAST:event_cbbSanPhamActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -677,6 +790,7 @@ public class DanhMucGui extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(DanhMucGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -692,6 +806,7 @@ public class DanhMucGui extends javax.swing.JFrame {
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnThemDanhMuc;
     private javax.swing.JButton btnTimKiem;
+    private javax.swing.JComboBox<String> cbbSanPham;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -702,6 +817,7 @@ public class DanhMucGui extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel jpnKhachHang;
     private PanelBoder.PanelBoderCircle panelBoderCircle1;
@@ -710,8 +826,11 @@ public class DanhMucGui extends javax.swing.JFrame {
     private PanelBoder.PanelBoderFrm panelBoderFrm2;
     private PanelBoder.PanelBoderFrm panelBoderFrm3;
     private javax.swing.JTable tblDanhMuc;
+    private javax.swing.JTable tblSanPham;
     private javax.swing.JTextField txtMaDM;
     private javax.swing.JTextField txtTenDM;
     private javax.swing.JTextField txtTimKiem;
     // End of variables declaration//GEN-END:variables
+
+   
 }

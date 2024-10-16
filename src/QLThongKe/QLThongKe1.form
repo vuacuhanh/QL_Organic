@@ -252,9 +252,6 @@
                   <Font name="Segoe UI" size="12" style="1"/>
                 </Property>
               </Properties>
-              <AccessibilityProperties>
-                <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="TH&#x1ed0;NG K&#xca; DOANH THU THEO TH&#xc1;NG&#xa;"/>
-              </AccessibilityProperties>
 
               <Layout>
                 <DimensionLayout dim="0">

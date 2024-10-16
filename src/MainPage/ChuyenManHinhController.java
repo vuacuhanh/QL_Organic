@@ -1,51 +1,47 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package MainPage;
 
-import QLDanhMUc.QLDanhMuc;
-import QLDiaDiem.frmDiaDiem;
+import QLDanhMuc.QLDanhMuc;
 import QLHoaDon.QLHoaDon;
 import QLKhachHang.frmKhachHangJP;
 import QLSanPham.QLSanPhamJP;
+import QLThongKe.QLThongKe;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-/**
- *
- * @author User
- */
 public class ChuyenManHinhController {
     private JPanel root;
-    private String KindSelect ="";
+    private String KindSelect = "";
     private List<DanhMucBean> ListItem;
+
     public ChuyenManHinhController(JPanel root) {
         this.root = root;
     }
-    public void setView(JPanel jpanelItem, JLabel jlbItem){
+
+    public void setView(JPanel jpanelItem, JLabel jlbItem) {
         KindSelect = "TrangChu";
         jpanelItem.setBackground(new Color(255, 228, 196));
         jlbItem.setBackground(new Color(255, 228, 196));
         root.removeAll();
         root.setLayout(new BorderLayout());
-        root.add(new frmKhachHangJP());
+        root.add(new FrmHome());
         root.validate();
         root.repaint();
     }
-    public void setEvent(List<DanhMucBean> ListItem){
+
+    public void setEvent(List<DanhMucBean> ListItem) {
         this.ListItem = ListItem;
-        for(DanhMucBean item:ListItem){
-            item.getJlb().addMouseListener(new LabelEvent(item.getKind(),item.getJpn(),item.getJlb()));
+        for (DanhMucBean item : ListItem) {
+            item.getJlb().addMouseListener(new LabelEvent(item.getKind(), item.getJpn(), item.getJlb()));
+            item.getJpn().addMouseListener(new LabelEvent(item.getKind(), item.getJpn(), item.getJlb())); // Thêm sự kiện cho JPanel
         }
     }
-    class LabelEvent implements MouseListener{
+
+    class LabelEvent implements MouseListener {
         private JPanel node;
         private String kind;
         private JPanel jpnItem;
@@ -56,14 +52,14 @@ public class ChuyenManHinhController {
             this.jpnItem = jpnItem;
             this.jlnItem = jlnItem;
         }
-        
+
         @Override
         public void mouseClicked(MouseEvent e) {
             switch (kind) {
                 case "TrangChu":
                     node = new FrmHome();
                     break;
-                case "KhacHang":
+                case "KhachHang":
                     node = new frmKhachHangJP();
                     break;
                 case "SanPham":
@@ -75,8 +71,8 @@ public class ChuyenManHinhController {
                 case "HoaDon":
                     node = new QLHoaDon();
                     break;
-                case "DiaDiem":
-                    node = new frmDiaDiem();
+                case "ThongKe":
+                    node = new QLThongKe();
                     break;
                 default:
                     break;
@@ -97,9 +93,7 @@ public class ChuyenManHinhController {
         }
 
         @Override
-        public void mouseReleased(MouseEvent e) {
-            
-        }
+        public void mouseReleased(MouseEvent e) {}
 
         @Override
         public void mouseEntered(MouseEvent e) {
@@ -109,23 +103,24 @@ public class ChuyenManHinhController {
 
         @Override
         public void mouseExited(MouseEvent e) {
-            if(!KindSelect.equalsIgnoreCase(kind)){
-                jpnItem.setBackground(new Color(242,242,242));
-                jlnItem.setBackground(new Color(242,242,242));
+            if (!KindSelect.equalsIgnoreCase(kind)) {
+                jpnItem.setBackground(new Color(242, 242, 242));
+                jlnItem.setBackground(new Color(242, 242, 242));
             }
         }
-        
     }
-    private void setChangeBackGround(String kind){
-        for(DanhMucBean item:ListItem){
-           if(item.getKind().equalsIgnoreCase(kind)){
-               item.getJpn().setBackground(new Color(255, 228, 196));
-               item.getJlb().setBackground(new Color(255, 228, 196));
-           }else{
-               item.getJpn().setBackground(new Color(242,242,242));
-               item.getJlb().setBackground(new Color(242,242,242));
-           }
+
+    private void setChangeBackGround(String kind) {
+        for (DanhMucBean item : ListItem) {
+            if (item.getKind().equalsIgnoreCase(kind)) {
+                item.getJpn().setBackground(new Color(255, 228, 196));
+                item.getJlb().setBackground(new Color(255, 228, 196));
+            } else {
+                item.getJpn().setBackground(new Color(242, 242, 242));
+                item.getJlb().setBackground(new Color(242, 242, 242));
+            }
+            item.getJpn().repaint(); // Vẽ lại JPanel
+            item.getJlb().repaint(); // Vẽ lại JLabel
         }
     }
-    
 }

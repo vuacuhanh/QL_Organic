@@ -15,7 +15,7 @@ public class QLThongKe1 extends javax.swing.JFrame {
      */
     public QLThongKe1() {
         initComponents();
-            hienThiThongKe();  // Gọi hàm để hiển thị thống kê lên các TextField
+        hienThiThongKe();  // Gọi hàm để hiển thị thống kê lên các TextField
 
     }
 

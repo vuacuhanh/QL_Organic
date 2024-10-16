@@ -18,24 +18,22 @@ public class TaiKhoan {
         loadTaiKhoan(); // Tải tài khoản từ CSDL
     }
 
-    // Tải tài khoản từ CSDL
     private void loadTaiKhoan() {
         try (Session session = connectDB.getDriver().session()) {
-            String query = "MATCH (tk:TaiKhoan) RETURN tk.maTK AS maTK, tk.tenDangNhap AS tenDangNhap, tk.matKhau AS matKhau, tk.quyenHan AS quyenHan";
+            String query = "MATCH (tk:Account) RETURN tk.MaTK AS maTK, tk.TenDangNhap AS tenDangNhap, tk.MatKhau AS matKhau, tk.QuyenHan AS quyenHan";
             session.run(query).forEachRemaining(record -> {
                 String maTK = record.get("maTK").asString();
                 String tenDangNhap = record.get("tenDangNhap").asString();
                 String matKhau = record.get("matKhau").asString();
                 String quyenHan = record.get("quyenHan").asString();
                 danhSachTaiKhoan.add(new TTTaiKhoan(maTK, tenDangNhap, matKhau, quyenHan));
-                // Log thông tin tài khoản đã tải
                 System.out.println("Tài khoản được tải: " + tenDangNhap);
             });
         } catch (Exception e) {
             System.err.println("Lỗi khi tải tài khoản: " + e.getMessage());
         }
     }
-    
+
     // In danh sách tài khoản
     public void inDanhSachTaiKhoan() {
         if (danhSachTaiKhoan.isEmpty()) {
@@ -56,13 +54,14 @@ public class TaiKhoan {
     // Phương thức thêm tài khoản
     public void themTaiKhoan(TTTaiKhoan taiKhoan) {
         try (Session session = connectDB.getDriver().session()) {
-            String query = "CREATE (tk:TaiKhoan {maTK: $maTK, tenDangNhap: $tenDangNhap, matKhau: $matKhau, quyenHan: $quyenHan})";
+            String query = "CREATE (tk:Account {MaTK: $maTK, TenDangNhap: $tenDangNhap, MatKhau: $matKhau, QuyenHan: $quyenHan})";
             session.run(query, 
                 org.neo4j.driver.Values.parameters("maTK", taiKhoan.getMaTK(),
                                                      "tenDangNhap", taiKhoan.getTenDangNhap(),
                                                      "matKhau", taiKhoan.getMatKhau(),
                                                      "quyenHan", taiKhoan.getQuyenHan()));
             danhSachTaiKhoan.add(taiKhoan); // Cập nhật danh sách tài khoản trong bộ nhớ
+            System.out.println("Tài khoản được thêm: " + taiKhoan.getTenDangNhap());
         } catch (Exception e) {
             System.err.println("Lỗi khi thêm tài khoản: " + e.getMessage());
         }
@@ -71,7 +70,7 @@ public class TaiKhoan {
     // Phương thức sửa tài khoản
     public void suaTaiKhoan(String maTK, String tenDangNhap, String matKhau, String quyenHan) {
         try (Session session = connectDB.getDriver().session()) {
-            String query = "MATCH (tk:TaiKhoan {maTK: $maTK}) SET tk.tenDangNhap = $tenDangNhap, tk.matKhau = $matKhau, tk.quyenHan = $quyenHan";
+            String query = "MATCH (tk:Account {MaTK: $maTK}) SET tk.TenDangNhap = $tenDangNhap, tk.MatKhau = $matKhau, tk.QuyenHan = $quyenHan";
             session.run(query, 
                 org.neo4j.driver.Values.parameters("maTK", maTK,
                                                      "tenDangNhap", tenDangNhap,
@@ -83,6 +82,7 @@ public class TaiKhoan {
                     taiKhoan.setTenDangNhap(tenDangNhap);
                     taiKhoan.setMatKhau(matKhau);
                     taiKhoan.setQuyenHan(quyenHan);
+                    System.out.println("Tài khoản đã được sửa: " + tenDangNhap);
                     break;
                 }
             }
@@ -93,16 +93,23 @@ public class TaiKhoan {
 
     // Phương thức xóa tài khoản
     public boolean xoaTaiKhoan(String maTK) {
-        for (TTTaiKhoan tk : danhSachTaiKhoan) {
-            if (tk.getMaTK().equals(maTK)) {
-                danhSachTaiKhoan.remove(tk);
-                return true; // Return true if deletion is successful
+        try (Session session = connectDB.getDriver().session()) {
+            String query = "MATCH (tk:Account {MaTK: $maTK}) DELETE tk";
+            session.run(query, org.neo4j.driver.Values.parameters("maTK", maTK));
+
+            for (TTTaiKhoan tk : danhSachTaiKhoan) {
+                if (tk.getMaTK().equals(maTK)) {
+                    danhSachTaiKhoan.remove(tk);
+                    System.out.println("Tài khoản đã được xóa: " + maTK);
+                    return true; // Return true if deletion is successful
+                }
             }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi xóa tài khoản: " + e.getMessage());
         }
         return false; // Return false if the account is not found
     }
 
-    
     // Kiểm tra mã tài khoản đã tồn tại
     public boolean kiemTraMaTK(String maTK) {
         for (TTTaiKhoan tk : danhSachTaiKhoan) {

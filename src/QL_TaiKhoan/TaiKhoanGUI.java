@@ -61,6 +61,7 @@ public class TaiKhoanGUI {
         gbc.gridx = 0; gbc.gridy = 1; inputPanel.add(new JLabel("Tên Đăng Nhập:"), gbc);
         gbc.gridx = 1; gbc.gridy = 1; tenTKField = new JTextField(15); inputPanel.add(tenTKField, gbc);
 
+     // Các trường nhập liệu
         gbc.gridx = 0; gbc.gridy = 2; inputPanel.add(new JLabel("Mật Khẩu:"), gbc);
         gbc.gridx = 1; gbc.gridy = 2; matKhauField = new JPasswordField(15); inputPanel.add(matKhauField, gbc);
 
@@ -100,12 +101,18 @@ public class TaiKhoanGUI {
         styleButton(deleteButton, new Color(0, 0, 128)); // Màu navy
         deleteButton.addActionListener(e -> deleteAccount());
         buttonPanel.add(deleteButton);
+        
+     // Thêm nút hiển thị mật khẩu
+        JButton showPasswordButton = new JButton("Hiển thị");
+        showPasswordButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Thêm con trỏ chuột thay đổi khi di chuột
+        gbc.gridx = 2; gbc.gridy = 2; inputPanel.add(showPasswordButton, gbc);
 
         // Thêm buttonPanel vào phần bên phải của frame
         frame.add(buttonPanel, BorderLayout.EAST);
 
         // Tạo bảng để hiển thị danh sách tài khoản
-        String[] columnNames = {"Mã Tài Khoản", "Tên Đăng Nhập", "Quyền Hạn"};
+        String[] columnNames = {"Mã Tài Khoản", "Tên Đăng Nhập", "Mật Khẩu", "Quyền Hạn"};
+
         tableModel = new DefaultTableModel(columnNames, 0);
         taiKhoanTable = new JTable(tableModel);
         taiKhoanTable.setFillsViewportHeight(true);
@@ -128,6 +135,17 @@ public class TaiKhoanGUI {
                 if (row >= 0) {
                     loadAccountData(row);
                 }
+            }
+        });
+        
+     // Xử lý sự kiện khi nhấn nút hiển thị mật khẩu
+        showPasswordButton.addActionListener(e -> {
+            if (matKhauField.getEchoChar() == '*') {
+                matKhauField.setEchoChar((char) 0); // Hiển thị mật khẩu
+                showPasswordButton.setText("Ẩn");
+            } else {
+                matKhauField.setEchoChar('*'); // Ẩn mật khẩu
+                showPasswordButton.setText("Hiển");
             }
         });
 
@@ -165,14 +183,14 @@ public class TaiKhoanGUI {
         return true;
     }
 
-    // Phương thức cập nhật vùng hiển thị danh sách tài khoản
     private void updateTable() {
         // Xóa tất cả dữ liệu hiện có trong bảng
         tableModel.setRowCount(0);
         for (TTTaiKhoan tk : taiKhoan.getList()) {
-            tableModel.addRow(new Object[]{tk.getMaTK(), tk.getTenDangNhap(), tk.getQuyenHan()});
+            tableModel.addRow(new Object[]{tk.getMaTK(), tk.getTenDangNhap(), tk.getMatKhau(), tk.getQuyenHan()});
         }
     }
+
 
     // Phương thức xóa các trường nhập liệu
     private void clearFields() {
@@ -182,14 +200,13 @@ public class TaiKhoanGUI {
         quyenHanField.setText("");
     }
 
-    // Tải dữ liệu từ bảng vào các trường nhập liệu
     private void loadAccountData(int row) {
         maTKField.setText(tableModel.getValueAt(row, 0).toString());
         tenTKField.setText(tableModel.getValueAt(row, 1).toString());
-        matKhauField.setText(tableModel.getValueAt(row, 2).toString());
+        matKhauField.setText(tableModel.getValueAt(row, 2).toString()); // Hiển thị mật khẩu
         quyenHanField.setText(tableModel.getValueAt(row, 3).toString());
-        // Không hiển thị mật khẩu vì lý do bảo mật
     }
+
 
     // Thêm tài khoản
     private void addAccount() {
