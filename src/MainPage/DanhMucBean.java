@@ -1,23 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package MainPage;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-/**
- *
- * @author User
- */
 public class DanhMucBean {
     private String kind;
     private JPanel jpn;
     private JLabel jlb;
 
-    public DanhMucBean() {
-    }
+    public DanhMucBean() {}
 
     public DanhMucBean(String kind, JPanel jpn, JLabel jlb) {
         this.kind = kind;
@@ -48,5 +39,4 @@ public class DanhMucBean {
     public void setJlb(JLabel jlb) {
         this.jlb = jlb;
     }
-    
 }

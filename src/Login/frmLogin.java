@@ -24,6 +24,7 @@ public class frmLogin extends javax.swing.JFrame {
         initComponents();
         connectDB = new ConnectDB(); // Khởi tạo kết nối
         tkModify = new TKmodify(connectDB); // Khởi tạo đối tượng TKmodify
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -257,7 +258,8 @@ public class frmLogin extends javax.swing.JFrame {
             // Kiểm tra tài khoản
             if (tk != null) {
             // Nếu đăng nhập thành công, mở trang chủ
-                new frmTrangChu(tk).setVisible(true);
+                frmTrangChu home = new frmTrangChu(tk);
+                home.setVisible(true);
                 this.dispose(); // Đóng form đăng nhập
             } else {
                 // Thông báo nếu thông tin không đúng

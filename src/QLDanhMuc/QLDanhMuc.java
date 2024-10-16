@@ -2,11 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package QLDanhMUc;
+package QLDanhMuc;
 import QLDanhMuc.DanhMuc;
 import QLDanhMuc.TTDanhMuc;
+import QLSanPham.SanPham;
+import QLSanPham.TTSanPham;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
@@ -22,11 +26,91 @@ import javax.swing.table.TableRowSorter;
  */
 public class QLDanhMuc extends javax.swing.JPanel {
 
+     private DanhMuc danhMuc; // Đối tượng để lấy danh sách sản phẩm
+     private SanPham sanPham; // Đối tượng để lấy danh sách sản phẩm
+    private DefaultTableModel tableModel; // Model cho JTable
+    private DefaultTableModel tableModel1;
     /**
      * Creates new form QLDanhMuc
      */
     public QLDanhMuc() {
         initComponents();
+       danhMuc = new DanhMuc(); // Khởi tạo đối tượng SanPham
+        tableModel = (DefaultTableModel) tblDanhMuc.getModel(); // Lấy model từ JTable
+        sanPham = new SanPham(); // Khởi tạo đối tượng SanPham
+        tableModel1 = (DefaultTableModel) tblSanPham.getModel(); // Lấy model từ JTable
+        loadDanhMuc(); // Gọi hàm để load sản phẩm vào bảng
+        loadProducts();
+        
+         // Thêm listener cho tblSanPham
+        tblDanhMuc.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) { // Chỉ xử lý khi sự kiện không đang điều chỉnh
+                    int selectedRow = tblDanhMuc.getSelectedRow(); // Lấy chỉ số hàng được chọn
+                    if (selectedRow != -1) { // Kiểm tra xem có hàng nào được chọn không
+                        // Lấy thông tin sản phẩm từ hàng được chọn
+                        updateFieldsFromSelectedRow(selectedRow);
+                    }
+                }
+            }
+        });
+
+        btnTimKiem.addActionListener(new java.awt.event.ActionListener() {
+    public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnTimKiemActionPerformed(evt);
+    }
+});
+    }
+     private void loadDanhMuc() {
+    DanhMuc danhMuc = new DanhMuc();  // Tạo đối tượng DanhMuc để truy cập hàm lấy danh mục
+    List<TTDanhMuc> danhMucList = danhMuc.getDanhSachDanhMuc();  // Lấy danh sách danh mục
+    cbbSanPham.removeAllItems();  // Xóa các item cũ trong combobox
+    // Thay đổi ở đây: thêm mã danh mục vào combobox1
+    for (TTDanhMuc dm : danhMucList) {
+        cbbSanPham.addItem(dm.getMaDM() + " - " + dm.getTenDM());  // Thêm mã và tên danh mục vào combobox1
+    }
+
+        // Lấy danh sách sản phẩm
+        List<TTDanhMuc> danhSach = danhMuc.getDanhSachDanhMuc();
+
+        // Xóa tất cả dữ liệu hiện có trong bảng
+        tableModel.setRowCount(0);
+
+        // Thêm dữ liệu sản phẩm vào bảng
+        for (TTDanhMuc sp : danhSach) {
+            Object[] row = {
+                sp.getMaDM(),
+                sp.getTenDM(),
+            };
+            tableModel.addRow(row); // Thêm hàng vào bảng
+        }
+    }
+      private void loadProducts() {
+        // Lấy danh sách sản phẩm
+        List<TTSanPham> danhSach = sanPham.getDanhSachSanPham();
+
+        // Xóa tất cả dữ liệu hiện có trong bảng
+        tableModel1.setRowCount(0);
+        
+
+        // Thêm dữ liệu sản phẩm vào bảng
+        for (TTSanPham sp : danhSach) {
+            Object[] row = {
+                sp.getTenSP(),
+            };
+            tableModel1.addRow(row); // Thêm hàng vào bảng
+        }
+    }
+     private void updateFieldsFromSelectedRow(int selectedRow) {
+        // Lấy giá trị từ bảng
+        String maDM = (String) tableModel.getValueAt(selectedRow, 0);
+        String tenDM = (String) tableModel.getValueAt(selectedRow, 1);
+
+        // Cập nhật các JTextField
+        txtMaDM.setText(maDM);
+        txtTenDM.setText(tenDM);
+        
     }
 
     /**
@@ -64,6 +148,9 @@ public class QLDanhMuc extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblSanPham = new javax.swing.JTable();
+        cbbSanPham = new javax.swing.JComboBox<>();
 
         jpnKhachHang.setBackground(new java.awt.Color(0, 51, 102));
 
@@ -340,11 +427,11 @@ public class QLDanhMuc extends javax.swing.JPanel {
                 .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtTenDM, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(271, 271, 271)
+                .addGap(18, 18, 18)
                 .addComponent(panelBoderFrm2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panelBoderFrm3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(71, Short.MAX_VALUE))
+                .addContainerGap(319, Short.MAX_VALUE))
         );
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
@@ -372,6 +459,26 @@ public class QLDanhMuc extends javax.swing.JPanel {
                     .addGap(0, 18, Short.MAX_VALUE)))
         );
 
+        tblSanPham.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Tên sản phẩm"
+            }
+        ));
+        jScrollPane1.setViewportView(tblSanPham);
+
+        cbbSanPham.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbbSanPham.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbSanPhamActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpnKhachHangLayout = new javax.swing.GroupLayout(jpnKhachHang);
         jpnKhachHang.setLayout(jpnKhachHangLayout);
         jpnKhachHangLayout.setHorizontalGroup(
@@ -388,14 +495,18 @@ public class QLDanhMuc extends javax.swing.JPanel {
                                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1)
                             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE))))
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
+                            .addGroup(jpnKhachHangLayout.createSequentialGroup()
+                                .addComponent(cbbSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
             .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jpnKhachHangLayout.createSequentialGroup()
                     .addGap(429, 429, 429)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(640, Short.MAX_VALUE)))
+                    .addContainerGap(665, Short.MAX_VALUE)))
         );
         jpnKhachHangLayout.setVerticalGroup(
             jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -408,9 +519,16 @@ public class QLDanhMuc extends javax.swing.JPanel {
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelBoderFrm1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3))
-                .addContainerGap())
+                    .addGroup(jpnKhachHangLayout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cbbSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(57, 57, 57))
+                    .addGroup(jpnKhachHangLayout.createSequentialGroup()
+                        .addComponent(panelBoderFrm1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(25, Short.MAX_VALUE))))
             .addGroup(jpnKhachHangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jpnKhachHangLayout.createSequentialGroup()
                     .addContainerGap(814, Short.MAX_VALUE)
@@ -422,9 +540,7 @@ public class QLDanhMuc extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jpnKhachHang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jpnKhachHang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -451,23 +567,23 @@ public class QLDanhMuc extends javax.swing.JPanel {
     }//GEN-LAST:event_txtTenDMActionPerformed
 
     private void btnThemDanhMucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemDanhMucActionPerformed
-        //        // Khi nhấn nút thêm sản phẩm
-        //        // Lấy thông tin từ các JTextField
+//        // Khi nhấn nút thêm sản phẩm
+//        // Lấy thông tin từ các JTextField
         String maDM = txtMaDM.getText();
         String tenDM = txtTenDM.getText();
-        //        double giaTien = Double.parseDouble(txtGia.getText());
-        //        String moTa = txtMoTa.getText();
-        //        String donViTinh = txtDVT.getText();
-        //        String xuatXu = txtXuatXu.getText();
-        //        int soLuongTonKho = Integer.parseInt(txtSoLuongTonKho.getText());
-        //
-        //        // Tạo đối tượng sản phẩm
+//        double giaTien = Double.parseDouble(txtGia.getText());
+//        String moTa = txtMoTa.getText();
+//        String donViTinh = txtDVT.getText();
+//        String xuatXu = txtXuatXu.getText();
+//        int soLuongTonKho = Integer.parseInt(txtSoLuongTonKho.getText());
+//
+//        // Tạo đối tượng sản phẩm
         TTDanhMuc dm = new TTDanhMuc(maDM, tenDM);
-        //
-        //        // Thêm sản phẩm vào cơ sở dữ liệu
+//
+//        // Thêm sản phẩm vào cơ sở dữ liệu
         DanhMuc danhMuc = new DanhMuc();
         boolean success = danhMuc.themDanhMucMoi(dm);
-        //
+//
         if (success) {
             JOptionPane.showMessageDialog(this, "Thêm danh mục thành công!");
 
@@ -497,13 +613,13 @@ public class QLDanhMuc extends javax.swing.JPanel {
     }//GEN-LAST:event_btnThemDanhMucActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        //        // Kiểm tra xem có dòng nào được chọn trong bảng không
+ //        // Kiểm tra xem có dòng nào được chọn trong bảng không
         int selectedRow = tblDanhMuc.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm cần xóa.");
             return;
         }
-        //
+//
         // Lấy mã sản phẩm của dòng được chọn
         String maDM = tblDanhMuc.getValueAt(selectedRow, 0).toString();  // Cột 0 là cột MaSP
 
@@ -539,6 +655,7 @@ public class QLDanhMuc extends javax.swing.JPanel {
         // Lấy thông tin từ các trường nhập liệu
         String maDM = txtMaDM.getText();
         String tenDM = txtTenDM.getText();
+
 
         // Tạo đối tượng sản phẩm với thông tin mới
         TTDanhMuc sp = new TTDanhMuc(maDM, tenDM);
@@ -591,6 +708,33 @@ public class QLDanhMuc extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnTimKiemActionPerformed
 
+    private void cbbSanPhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbSanPhamActionPerformed
+  String selectedItem = (String) cbbSanPham.getSelectedItem(); 
+
+    if (selectedItem != null) {
+        String maDM = selectedItem.split(" - ")[0]; // Giả sử item có định dạng "maDM - tenDM"
+
+        // Lấy danh sách sản phẩm theo mã danh mục
+        List<String> products = danhMuc.getSanPhamByCategory(maDM); 
+
+        // Cập nhật bảng sản phẩm
+        tableModel1.setRowCount(0); // Xóa dữ liệu cũ trong bảng sản phẩm
+        
+        // Sử dụng Set để tránh thêm sản phẩm trùng lặp
+        Set<String> addedProducts = new HashSet<>();
+        
+        for (String product : products) {
+            // Chỉ thêm sản phẩm nếu nó chưa có trong bảng
+            if (addedProducts.add(product)) {
+                tableModel1.addRow(new Object[]{product}); // Thêm sản phẩm vào bảng
+            }
+        }
+    } else {
+       
+    }
+ 
+    }//GEN-LAST:event_cbbSanPhamActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCapNhat;
@@ -598,6 +742,7 @@ public class QLDanhMuc extends javax.swing.JPanel {
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnThemDanhMuc;
     private javax.swing.JButton btnTimKiem;
+    private javax.swing.JComboBox<String> cbbSanPham;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -608,6 +753,7 @@ public class QLDanhMuc extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel jpnKhachHang;
     private PanelBoder.PanelBoderCircle panelBoderCircle1;
@@ -616,6 +762,7 @@ public class QLDanhMuc extends javax.swing.JPanel {
     private PanelBoder.PanelBoderFrm panelBoderFrm2;
     private PanelBoder.PanelBoderFrm panelBoderFrm3;
     private javax.swing.JTable tblDanhMuc;
+    private javax.swing.JTable tblSanPham;
     private javax.swing.JTextField txtMaDM;
     private javax.swing.JTextField txtTenDM;
     private javax.swing.JTextField txtTimKiem;
