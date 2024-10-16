@@ -28,8 +28,6 @@ public class FrmHome extends javax.swing.JPanel {
 
         jPanel1 = new javax.swing.JPanel();
         panelBoderFrm1 = new PanelBoder.PanelBoderFrm();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         panelBoderFrm2 = new PanelBoder.PanelBoderFrm();
         pieChartIcon1 = new PanelBoder.PieChartIcon();
         pieChartIcon2 = new PanelBoder.PieChartIcon();
@@ -41,31 +39,15 @@ public class FrmHome extends javax.swing.JPanel {
 
         panelBoderFrm1.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/img3.jpg"))); // NOI18N
-
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/img4.jpg"))); // NOI18N
-
         javax.swing.GroupLayout panelBoderFrm1Layout = new javax.swing.GroupLayout(panelBoderFrm1);
         panelBoderFrm1.setLayout(panelBoderFrm1Layout);
         panelBoderFrm1Layout.setHorizontalGroup(
             panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                .addGap(79, 79, 79)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46))
+            .addGap(0, 991, Short.MAX_VALUE)
         );
         panelBoderFrm1Layout.setVerticalGroup(
             panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBoderFrm1Layout.createSequentialGroup()
-                .addGap(73, 73, 73)
-                .addGroup(panelBoderFrm1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(138, Short.MAX_VALUE))
+            .addGap(0, 501, Short.MAX_VALUE)
         );
 
         panelBoderFrm2.setBackground(new java.awt.Color(255, 255, 153));
@@ -172,7 +154,7 @@ public class FrmHome extends javax.swing.JPanel {
                     .addComponent(panelBoderFrm2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBoderFrm1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(98, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -190,8 +172,6 @@ public class FrmHome extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private PanelBoder.PanelBoderFrm panelBoderFrm1;
     private PanelBoder.PanelBoderFrm panelBoderFrm2;

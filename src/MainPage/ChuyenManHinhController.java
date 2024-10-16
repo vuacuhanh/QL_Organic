@@ -1,7 +1,6 @@
 package MainPage;
 
 import QLDanhMuc.QLDanhMuc;
-import QLDiaDiem.frmDiaDiem;
 import QLHoaDon.QLHoaDon;
 import QLKhachHang.frmKhachHangJP;
 import QLSanPham.QLSanPhamJP;
@@ -29,7 +28,7 @@ public class ChuyenManHinhController {
         jlbItem.setBackground(new Color(255, 228, 196));
         root.removeAll();
         root.setLayout(new BorderLayout());
-        root.add(new frmKhachHangJP());
+        root.add(new FrmHome());
         root.validate();
         root.repaint();
     }

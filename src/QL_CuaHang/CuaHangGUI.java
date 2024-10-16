@@ -13,11 +13,10 @@ import javax.swing.event.ListSelectionListener;
 
 
 public class CuaHangGUI extends JFrame {
-    private CuaHang cuaHang;
     private JTable table;
     private DefaultTableModel tableModel;
-    private JTextField maCHField, tenCHField, diaChiField, emailField, sdtField, searchField;
-
+    private JTextField maCHField, tenCHField, diaChiField, emailField, sdtField, maKhuVucField, searchField;
+    private CuaHang cuaHang;
     // Màu chủ đạo
     private Color navyBlue = new Color(36, 54, 101);
     private Color creamColor = new Color(255, 247, 230);
@@ -31,6 +30,7 @@ public class CuaHangGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         getContentPane().setBackground(creamColor);
+        
 
         // Tạo bảng
         String[] columns = {"Mã CH", "Tên CH", "Địa Chỉ", "Email", "SĐT", "Mã Khu Vực"};
@@ -82,6 +82,7 @@ public class CuaHangGUI extends JFrame {
         diaChiField = createTextField(200, 120, inputFont);
         emailField = createTextField(200, 160, inputFont);
         sdtField = createTextField(200, 200, inputFont);
+        maKhuVucField = createTextField(200, 240, inputFont);
 
         inputPanel.add(createLabel("Mã CH:", 50, 40, labelFont));
         inputPanel.add(maCHField);
@@ -93,6 +94,13 @@ public class CuaHangGUI extends JFrame {
         inputPanel.add(emailField);
         inputPanel.add(createLabel("SĐT:", 50, 200, labelFont));
         inputPanel.add(sdtField);
+        inputPanel.add(createLabel("Mã Khu Vực:", 50, 240, labelFont));
+        inputPanel.add(maKhuVucField);
+        
+        inputPanel.add(new JLabel("Tìm Kiếm:"));
+        searchField = new JTextField();
+        inputPanel.add(searchField);
+
 
         add(inputPanel);
 
@@ -116,7 +124,7 @@ public class CuaHangGUI extends JFrame {
         
         add(searchPanel);
 
-        // Bố trí nút chức năng
+     // Bố trí nút chức năng
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setBounds(50, 380, 1100, 50);
@@ -137,7 +145,18 @@ public class CuaHangGUI extends JFrame {
         resetButton.addActionListener(e -> resetFields());
         buttonPanel.add(resetButton);
 
+        // Thêm nút mới vào buttonPanel
+        JButton searchByAreaButton = createButton("Tìm Khu Vực", buttonFont);
+        searchByAreaButton.addActionListener(e -> searchStoreByArea());
+        buttonPanel.add(searchByAreaButton);
+
+        JButton countButton = createButton("Tổng Cửa Hàng", buttonFont);
+        countButton.addActionListener(e -> countStores());
+        buttonPanel.add(countButton);
+
+
         add(buttonPanel);
+
 
         loadData(); // Tải dữ liệu khi khởi động
 
@@ -147,6 +166,22 @@ public class CuaHangGUI extends JFrame {
         addBorder(diaChiField);
         addBorder(emailField);
         addBorder(sdtField);
+        
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow >= 0) {
+                    maCHField.setText(tableModel.getValueAt(selectedRow, 0).toString());
+                    tenCHField.setText(tableModel.getValueAt(selectedRow, 1).toString());
+                    diaChiField.setText(tableModel.getValueAt(selectedRow, 2).toString());
+                    emailField.setText(tableModel.getValueAt(selectedRow, 3).toString());
+                    sdtField.setText(tableModel.getValueAt(selectedRow, 4).toString());
+                    maKhuVucField.setText(tableModel.getValueAt(selectedRow, 5).toString());  // Populate "Mã Khu Vực"
+                }
+            }
+        });
+
     }
 
     // Tạo JLabel với các thuộc tính tùy chỉnh
@@ -182,27 +217,23 @@ public class CuaHangGUI extends JFrame {
     }
 
     private void loadData() {
-        tableModel.setRowCount(0);
-
+        tableModel.setRowCount(0); // Đặt lại số hàng về 0
         List<TTCuaHang> danhSachCuaHang = cuaHang.getDanhSachCuaHang();
-        Set<String> maCuaHangSet = new HashSet<>();
 
         for (TTCuaHang cuaHang : danhSachCuaHang) {
-            if (cuaHang.getMaCH() != null && !cuaHang.getMaCH().isEmpty() &&
-                maCuaHangSet.add(cuaHang.getMaCH())) {
-                
-                Object[] rowData = {
+            if (cuaHang.getMaCH() != null) {
+                tableModel.addRow(new Object[]{
                     cuaHang.getMaCH(),
                     cuaHang.getTenCH(),
                     cuaHang.getDiaChi(),
                     cuaHang.getEmail(),
                     cuaHang.getSDT(),
-                    cuaHang.getMaKhuVuc()
-                };
-                tableModel.addRow(rowData);
+                    cuaHang.getMaKhuVuc() // Hiển thị Mã Khu Vực
+                });
             }
         }
     }
+
 
     // Tìm kiếm cửa hàng theo tên
     private void searchStoreByName() {
@@ -223,71 +254,84 @@ public class CuaHangGUI extends JFrame {
             }
         }
     }
+    
+    
 
-    // Thêm cửa hàng mới
- // Thêm cửa hàng mới
     private void addStore() {
         String maCH = maCHField.getText();
         String tenCH = tenCHField.getText();
         String diaChi = diaChiField.getText();
         String email = emailField.getText();
         String sdt = sdtField.getText();
+        String maKhuVuc = maKhuVucField.getText();
 
-        // Kiểm tra các trường không được để trống
-        if (maCH.isEmpty() || tenCH.isEmpty() || diaChi.isEmpty() || email.isEmpty() || sdt.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        // Validate that all fields are filled
+        if (maCH.isEmpty() || tenCH.isEmpty() || diaChi.isEmpty() || email.isEmpty() || sdt.isEmpty() || maKhuVuc.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        TTCuaHang newCuaHang = new TTCuaHang(maCH, tenCH, diaChi, email, sdt, "");
-        cuaHang.themCuaHangMoi(newCuaHang);
-        
-        // Load dữ liệu cập nhật
-        loadData();
-        
-        // Reset các trường nhập liệu
-        resetFields();
-        
-        // Thông báo
-        JOptionPane.showMessageDialog(null, "Cửa hàng mới đã được thêm thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        // Check if store ID already exists
+        for (TTCuaHang cuaHang : cuaHang.getDanhSachCuaHang()) {
+            if (cuaHang.getMaCH().equals(maCH)) {
+                JOptionPane.showMessageDialog(this, "Mã cửa hàng đã tồn tại, vui lòng nhập mã khác!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        // Create new store and add to list
+        TTCuaHang newCuaHang = new TTCuaHang(maCH, tenCH, diaChi, email, sdt, maKhuVuc);
+        boolean result = cuaHang.themCuaHangMoi(newCuaHang);
+
+        if (result) {
+            JOptionPane.showMessageDialog(this, "Cửa hàng mới đã được thêm thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            resetFields(); // Reset fields after adding
+            loadData(); // Reload data to reflect changes
+        } else {
+            JOptionPane.showMessageDialog(this, "Không thể thêm cửa hàng, vui lòng kiểm tra lại mã cửa hàng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    
-    // Sửa thông tin cửa hàng
- // Sửa thông tin cửa hàng
+
     private void editStore() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
-            // Lấy mã cửa hàng của dòng được chọn
+            // Get the existing store ID
             String maCH = tableModel.getValueAt(selectedRow, 0).toString();
-            
-            // Lấy dữ liệu mới từ các trường nhập liệu
+
+            // Get new values from input fields
             String tenCH = tenCHField.getText();
             String diaChi = diaChiField.getText();
             String email = emailField.getText();
             String sdt = sdtField.getText();
-            
-            // Cập nhật thông tin cửa hàng trong danh sách
-            TTCuaHang updatedCuaHang = new TTCuaHang(maCH, tenCH, diaChi, email, sdt, "");
-            cuaHang.suaCuaHang(maCH, updatedCuaHang);
+            String maKhuVuc = maKhuVucField.getText();  // Include Ma Khu Vuc field
 
-            // Tải lại dữ liệu lên bảng
-            loadData();
-            
-            // Đặt lại các trường nhập liệu về rỗng
-            resetFields();
-            
-            // Thông báo cho người dùng
-            JOptionPane.showMessageDialog(null, "Thông tin cửa hàng đã được cập nhật!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            // Validate input fields
+            if (tenCH.isEmpty() || diaChi.isEmpty() || email.isEmpty() || sdt.isEmpty() || maKhuVuc.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Create updated store object
+            TTCuaHang updatedCuaHang = new TTCuaHang(maCH, tenCH, diaChi, email, sdt, maKhuVuc);
+            boolean result = cuaHang.suaCuaHang(maCH, updatedCuaHang);
+
+            if (result) {
+                JOptionPane.showMessageDialog(this, "Cửa hàng đã được cập nhật thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                loadData();  // Reload table data after editing
+            } else {
+                JOptionPane.showMessageDialog(this, "Không thể cập nhật cửa hàng, vui lòng kiểm tra lại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn một cửa hàng để sửa!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một cửa hàng để sửa!", "Lỗi", JOptionPane.WARNING_MESSAGE);
         }
     }
 
 
 
+
+
     // Xóa cửa hàng
- // Xóa cửa hàng
     private void deleteStore() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
@@ -312,21 +356,49 @@ public class CuaHangGUI extends JFrame {
         }
     }
 
-    // Reset các trường nhập liệu
+    // Đặt lại các trường nhập liệu về rỗng
     private void resetFields() {
         maCHField.setText("");
         tenCHField.setText("");
         diaChiField.setText("");
         emailField.setText("");
         sdtField.setText("");
-        searchField.setText("");
-        loadData(); // Reload data to refresh the table
+        maKhuVucField.setText("");
+        searchField.setText(""); // Reset search field
+        loadData();
+        
     }
+    
+    private void searchStoreByArea() {
+        String maKhuVuc = maKhuVucField.getText();
+        tableModel.setRowCount(0);
+        
+        for (TTCuaHang cuaHang : cuaHang.getDanhSachCuaHang()) {
+            if (cuaHang.getMaKhuVuc().equals(maKhuVuc)) {
+                Object[] rowData = {
+                    cuaHang.getMaCH(),
+                    cuaHang.getTenCH(),
+                    cuaHang.getDiaChi(),
+                    cuaHang.getEmail(),
+                    cuaHang.getSDT(),
+                    cuaHang.getMaKhuVuc()
+                };
+                tableModel.addRow(rowData);
+            }
+        }
+        if (tableModel.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy cửa hàng trong khu vực này!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void countStores() {
+        int count = cuaHang.getDanhSachCuaHang().size();
+        JOptionPane.showMessageDialog(this, "Số lượng cửa hàng hiện có: " + count, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new CuaHangGUI();
-        });
+        SwingUtilities.invokeLater(() -> new CuaHangGUI());
     }
-
 }
